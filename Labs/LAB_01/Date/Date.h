@@ -2,13 +2,13 @@
 
 #include <string>
 
-class Date
-{
-private:
-    std::string date;
-public:
-    Date() = default;
-    void SetDate(std::string date);
-    std::string GetDate();
-    ~Date() = default;
+class Date {
+ public:
+  Date() = default;
+//  std::string GetCurrentDate();
+  void SetDate(std::string arg_date);
+  std::string GetDate();
+  ~Date() = default;
+ private:
+  std::string m_date;
 };

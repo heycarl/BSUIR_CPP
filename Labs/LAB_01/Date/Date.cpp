@@ -1,10 +1,11 @@
 #include "Date.h"
 
-void Date::SetDate(std::string date) {
-    this->date = date;
+#include <utility>
+
+void Date::SetDate(std::string arg_date) {
+  this->m_date = std::move(arg_date);
 }
 
-
 std::string Date::GetDate() {
-    return date;
+  return m_date;
 }
