@@ -16,7 +16,7 @@ class Employee {
   Employee(int arg_uid, float arg_rate, std::string arg_e_date, etype arg_e_type);
   Employee(int arg_uid, etype arg_e_type);
 
-  void PutEmploy(int arg_uid, float arg_rate, std::string arg_e_date, etype arg_e_type);
+  void PutEmployee(int arg_uid, float arg_rate, std::string arg_e_date, etype arg_e_type);
   std::string GetEmployee();
 
   ~Employee() = default;
