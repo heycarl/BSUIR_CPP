@@ -3,6 +3,7 @@
 #include <sstream>
 #include <utility>
 #include <random>
+#include <iomanip>
 
 using namespace std;
 
@@ -20,10 +21,10 @@ string Employee::GetEmployee() {
   string serialized_employee;
 
   stringstream ss;
-  ss << " | " << m_UID << " | ";
-  ss << m_rate << " | ";
+  ss << " | " << m_UID << setw(4) << " | ";
+  ss << m_rate << setw(6) << " | ";
   ss << m_employment_date.GetDate() << " | ";
-  ss << SerializeEType() << " | " << endl;
+  ss << SerializeEType() << setw(10) << " | " << endl;
   serialized_employee = ss.str();
   return serialized_employee;
 }
@@ -34,9 +35,9 @@ Employee::Employee(int arg_uid, etype arg_e_type) {
 
   default_random_engine oDefaultRandomEngine(arg_uid);
   uniform_real_distribution<double> distribution(0.0, 500.0);
-  this->m_rate = (float)distribution(oDefaultRandomEngine);
+  m_rate = (float)distribution(oDefaultRandomEngine);
 
-  this->m_emp_type = arg_e_type;
+  m_emp_type = arg_e_type;
 }
 
 void Employee::PutEmploy(int arg_uid, float arg_rate, string arg_e_date, etype arg_e_type) {
@@ -51,5 +52,4 @@ Employee::Employee(int arg_uid, float arg_rate, string arg_e_date, etype arg_e_t
   m_rate = arg_rate;
   m_employment_date.SetDate(std::move(arg_e_date));
   m_emp_type = arg_e_type;
-  // PutEmploy(arg_uid, arg_rate, std::move(arg_e_date), arg_e_type);
 }
