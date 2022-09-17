@@ -17,9 +17,9 @@ int InputHelper::InputInteger(const string &arg_HelpText) {
     cin >> l_InputInt;
 
     if (cin.fail()) {
-      cout << m_ErrorText << std::endl;
+      cout << m_ErrorText << endl;
       cin.clear();
-      cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
     } else if (l_InputInt <= 0) {
       cout << m_ErrorText << endl;
     } else {
@@ -35,9 +35,9 @@ float InputHelper::InputFloat(const string &arg_HelpText) {
     cin >> l_InputFloat;
 
     if (cin.fail()) {
-      cout << m_ErrorText << std::endl;
+      cout << m_ErrorText << endl;
       cin.clear();
-      cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
     } else if (l_InputFloat <= 0) {
       cout << m_ErrorText << endl;
     } else {
@@ -46,7 +46,7 @@ float InputHelper::InputFloat(const string &arg_HelpText) {
   } while (true);
 }
 
-string InputHelper::InputString(const string &arg_HelpText) {
+string InputHelper::InputString(const string &arg_HelpText, int arg_req_min_len, int arg_req_max_len) {
   string l_InputString;
   do {
     cout << arg_HelpText;
@@ -55,7 +55,31 @@ string InputHelper::InputString(const string &arg_HelpText) {
     if (cin.fail()) {
       cout << m_ErrorText << endl;
       cin.clear();
-      cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } else if (l_InputString.length() > arg_req_max_len || l_InputString.length() < arg_req_min_len) {
+      cout << m_ErrorText << endl;
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } else {
+      return l_InputString;
+    }
+  } while (true);
+}
+
+[[maybe_unused]] string InputHelper::InputString(const string &arg_HelpText, int arg_req_max_len) {
+  string l_InputString;
+  do {
+    cout << arg_HelpText;
+    cin >> l_InputString;
+
+    if (cin.fail()) {
+      cout << m_ErrorText << endl;
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    } else if (l_InputString.length() > arg_req_max_len) {
+      cout << m_ErrorText << endl;
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
     } else {
       return l_InputString;
     }

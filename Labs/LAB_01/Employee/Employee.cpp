@@ -21,10 +21,6 @@ string Employee::GetEmployee() {
   string serialized_employee;
 
   stringstream ss;
-//  ss << " | " << m_UID << setw(4) << " | ";
-//  ss << m_rate << setw(6) << " | ";
-//  ss << m_employment_date.GetDate() << " | ";
-//  ss << SerializeEType() << setw(10) << " | " << endl;
 
   ss << " | " << std::setw(2) << left << m_UID;
   ss << " | " << std::setw(8) << left << m_rate;

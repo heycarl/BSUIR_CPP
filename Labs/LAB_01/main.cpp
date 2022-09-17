@@ -13,9 +13,9 @@ int main() {
 
   int l_NewUID = InputHelper::InputInteger("Enter new UID: \n");
   float l_NewRate = InputHelper::InputFloat("Enter new Rate: \n");
-  string l_NewDate = InputHelper::InputString("Enter new date: \n");
+  string l_NewDate = InputHelper::InputString("Enter new date: \n", 10, 10);
 
-  oEmployee->PutEmployee(l_NewUID, l_NewRate, l_NewDate, Employee::secretary);
+  oEmployee->PutEmployee(l_NewUID, l_NewRate, l_NewDate, Employee::st_prep_kaf);
 
   cout << oEmployee->GetEmployee() << endl;
   cout << oEmployee2->GetEmployee() << endl;
