@@ -1,6 +1,5 @@
 #include <iostream>
 
-
 #include "Employee/Employee.h"
 #include "InputHelper/InputHelper.h"
 
@@ -20,6 +19,11 @@ int main() {
   cout << oEmployee->GetEmployee() << endl;
   cout << oEmployee2->GetEmployee() << endl;
   cout << oEmployee3->GetEmployee() << endl;
+
+  oEmployee3 = *oEmployee3 + 20;
+  cout << oEmployee3->GetEmployee() << endl;
+
+  cout << (*oEmployee3 & *oEmployee) << endl;
 
   return 0;
 }
