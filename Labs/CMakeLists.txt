@@ -9,3 +9,6 @@ add_executable(LAB_01
         LAB_01/Date/Date.cpp
         LAB_01/InputHelper/InputHelper.cpp
         LAB_01/InputHelper/InputHelper.h)
+
+add_executable(LAB_02
+        LAB_02/main.cpp LAB_02/String/String.cpp LAB_02/String/String.h)
