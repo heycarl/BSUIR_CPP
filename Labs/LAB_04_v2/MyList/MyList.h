@@ -18,10 +18,8 @@ class MyList {
   Node<T> *m_head;
   std::size_t m_size;
  public:
-  MyList() {
-    m_head = nullptr;
-    m_size = 0;
-  }
+  MyList();
+  ~MyList();
 
   void push_back(T val);
   void push_front(T val);
@@ -100,6 +98,21 @@ T &MyList<T>::front() {
     temp_ptr = temp_ptr->next;
   }
   return temp_ptr->data;
+}
+template<typename T>
+MyList<T>::MyList() {
+  m_head = nullptr;
+  m_size = 0;
+}
+template<typename T>
+MyList<T>::~MyList() {
+  auto *temp_ptr = m_head;
+  auto *node_to_delete = m_head;
+  while (temp_ptr) {
+    temp_ptr = temp_ptr->next;
+    delete node_to_delete;
+    node_to_delete = temp_ptr;
+  }
 }
 
 #endif //LABS_LAB_04_V2_MYLIST_MYLIST_H_
