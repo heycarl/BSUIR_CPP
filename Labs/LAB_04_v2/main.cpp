@@ -1,23 +1,22 @@
 #include <iostream>
-#include <queue>
 #include "MyQueue/MyQueue.h"
-#include "MyList/MyList.h"
-#include <list>
-
-#include <iostream>
 
 int main() {
-//  std::queue<int> q;
-  MyQueue<int> q;
+  MyQueue<std::string> q;
 
-  q.push(1);
-  q.push(2);
-  q.push(3);
+  q.push("Sasha");
+  q.push("Petya");
+  q.push("Andrew");
+  q.print();
+
 
   std::cout << q.size() << std::endl;
 
   q.pop();
   std::cout << q.back() << std::endl;
   std::cout << q.front() << std::endl;
+
+  q.push("Alligator");
+  q.print();
 
 }

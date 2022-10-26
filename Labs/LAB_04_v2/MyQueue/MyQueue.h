@@ -20,6 +20,7 @@ class MyQueue {
   T &front();
   std::size_t size();
   bool empty();
+  void print();
 };
 template<typename T>
 void MyQueue<T>::push(T arg_element) {
@@ -29,6 +30,7 @@ template<typename T>
 void MyQueue<T>::pop() {
   return m_data.pop_front();
 }
+
 template<typename T>
 std::size_t MyQueue<T>::size() {
   return m_data.size();
@@ -37,6 +39,7 @@ template<typename T>
 bool MyQueue<T>::empty() {
   return m_data.empty();
 }
+
 template<typename T>
 T &MyQueue<T>::back() {
   return m_data.back();
@@ -44,6 +47,11 @@ T &MyQueue<T>::back() {
 template<typename T>
 T &MyQueue<T>::front() {
   return m_data.front();
+}
+
+template<typename T>
+void MyQueue<T>::print() {
+  m_data.list_serializer();
 }
 
 #endif //LABS_LAB_04_MYQUEUE_MYQUEUE_H_

@@ -21,9 +21,9 @@ add_executable(
 add_executable(
         LAB_04
         LAB_04/main.cpp
-        LAB_04/MyQueue/MyQueue.cpp LAB_04/MyQueue/MyQueue.h)
+        LAB_04/MyQueue/MyQueue.h)
 
 add_executable(
         LAB_04_v2
         LAB_04_v2/main.cpp
-        LAB_04_v2/MyQueue/MyQueue.cpp LAB_04_v2/MyQueue/MyQueue.h LAB_04_v2/MyList/MyList.cpp LAB_04_v2/MyList/MyList.h)
+        LAB_04_v2/MyQueue/MyQueue.h LAB_04_v2/MyList/MyList.h)

@@ -6,6 +6,8 @@
 #define LABS_LAB_04_V2_MYLIST_MYLIST_H_
 
 #include <cstddef>
+#include <iostream>
+
 template<typename T>
 struct Node {
   T data;
@@ -23,9 +25,13 @@ class MyList {
 
   void push_back(T val);
   void push_front(T val);
+
   void pop_back();
   void pop_front();
+
   bool empty();
+  void list_serializer();
+
   std::size_t size();
   T &back();
   T &front();
@@ -113,6 +119,16 @@ MyList<T>::~MyList() {
     delete node_to_delete;
     node_to_delete = temp_ptr;
   }
+}
+template<typename T>
+void MyList<T>::list_serializer() {
+  auto temp_ptr = m_head;
+  std::cout << "List visualisation: ";
+  while (temp_ptr) {
+    std::cout << temp_ptr->data << (temp_ptr->next == nullptr ? " end" : " ");
+    temp_ptr = temp_ptr->next;
+  }
+  std::cout << std::endl;
 }
 
 #endif //LABS_LAB_04_V2_MYLIST_MYLIST_H_
