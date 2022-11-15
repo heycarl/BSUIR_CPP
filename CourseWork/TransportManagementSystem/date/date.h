@@ -16,6 +16,8 @@ class date {
   std::string serialize();
   std::string serialize(std::string text);
 
+  void set_date(uint8_t y, uint8_t m, uint8_t d);
+
 };
 
 #endif //_DATE_H_
