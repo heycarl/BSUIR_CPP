@@ -9,12 +9,12 @@
 
 #include "./person.h"
 #include "../date/date.h"
-#include "../transport/transport.h"
+#include "vehicle.h"
 
 class driver : public person {
  private:
   date license_expiration;
-  transport::transport_type license_type = transport::transport_type::bus; // default license
+  vehicle::vehicle_type license_type = vehicle::vehicle_type::bus; // default license
  private:
   std::string serialize_license();
  public:
