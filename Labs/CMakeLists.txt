@@ -27,3 +27,8 @@ add_executable(
         LAB_04_v2
         LAB_04_v2/main.cpp
         LAB_04_v2/MyQueue/MyQueue.h LAB_04_v2/MyList/MyList.h)
+
+add_executable(
+        LAB_05
+        LAB_05/Computer/Computer.cpp LAB_05/Computer/Computer.h LAB_05/Desktop/Desktop.cpp LAB_05/Desktop/Desktop.h LAB_05/Portable/Portable.cpp LAB_05/Portable/Portable.h LAB_05/Monoblock/Monoblock.cpp LAB_05/Monoblock/Monoblock.h LAB_05/Laptop/Laptop.cpp LAB_05/Laptop/Laptop.h LAB_05/Tablet/Tablet.cpp LAB_05/Tablet/Tablet.h LAB_05/Serializer/Serializer.cpp LAB_05/Serializer/Serializer.h
+        LAB_05/main.cpp LAB_05/errors/Exp.cpp LAB_05/errors/Exp.h LAB_05/errors/Exp_Input.cpp LAB_05/errors/Exp_Input.h)
