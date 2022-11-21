@@ -5,9 +5,9 @@
 #include <iostream>
 #include "../LAB_03/Monoblock/Monoblock.h"
 #include "../LAB_03/Laptop/Laptop.h"
-#include "../LAB_03/Tablet/Tablet.h"
 
 #include "errors/Exp_Input.h"
+#include "errors/Exp_Output.h"
 
 int main() {
   auto l_Monoblock = Monoblock();
@@ -15,7 +15,7 @@ int main() {
   l_Monoblock.SetModel("UltraMono-1");
 
   try {
-    l_Monoblock.SetScreenSize(60);
+    l_Monoblock.SetScreenSize(20);
   } catch (Exp_Input& err) {
     std::cout << "Error cached: {\n" << err.show() << "\n}" << std::endl;
   } catch (Exp& err) {
@@ -30,16 +30,27 @@ int main() {
   l_Laptop.SetScreenSize(15.6);
 
   try {
-    l_Laptop.SetBatteryCharge(101);
+    l_Laptop.SetBatteryCharge(100);
+  } catch (Exp_Input& err) {
+    std::cout << "Input error cached: {\n" << err.show() << "\n}" << std::endl;
   } catch (Exp& err) {
     std::cout << "Unexpected error: {\n" << err.show() << "\n}" << std::endl;
   }
 
   l_Laptop.SetKeyNum(40);
 
+  l_Laptop.SetBrand("asd");
+
   std::cout << l_Monoblock.SerializeHeader();
   std::cout << l_Monoblock.Serialize() << std::endl;
 
+
   std::cout << l_Laptop.SerializeHeader();
-  std::cout << l_Laptop.Serialize() << std::endl;
+  try {
+    std::cout << l_Laptop.Serialize() << std::endl;
+  } catch (Exp_Output& err) {
+    std::cout << "Output error cached: {\n" << err.show() << "\n}" << std::endl;
+  } catch (Exp& err) {
+    std::cout << "Unexpected error: {\n" << err.show() << "\n}" << std::endl;
+  }
 }
