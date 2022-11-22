@@ -7,12 +7,11 @@
 
 #include <iostream>
 
-#include "travelCard.h"
-#include "../vehicle/vehicle.h"
+#include "travel_card.h"
 
 class travelCardsManager {
 public:
-    static bool validator(vehicle_type, travelCard);
+    static bool validator(travelCard);
 };
 
 #endif //TRAVELCARDSMANAGER_H_
