@@ -5,8 +5,14 @@
 #ifndef TRAVELCARDSMANAGER_H_
 #define TRAVELCARDSMANAGER_H_
 
-class travelCardsManager {
+#include <iostream>
 
+#include "travelCard.h"
+#include "../vehicle/vehicle.h"
+
+class travelCardsManager {
+public:
+    static bool validator(vehicle_type, travelCard);
 };
 
 #endif //TRAVELCARDSMANAGER_H_
