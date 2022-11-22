@@ -8,14 +8,15 @@
 #include <iostream>
 #include <list>
 
-#include "../bus_stop/bus_stop.h"
-#include "../person/driver.h"
+#include "bus_stop.h"
+#include "driver.h"
 
 class route {
  private:
   struct stop {
     bus_stop bus_stop;
     time_t arrival_time = 0;
+    bool need_to_stop = false;
   };
   std::list<stop> route;
   driver route_driver;
