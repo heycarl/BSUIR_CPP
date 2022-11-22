@@ -7,11 +7,11 @@
 
 #include <list>
 
-#include "../person/passenger.h"
-#include "../person/driver.h"
-#include "../bus_stop/bus_stop.h"
-#include "../travel_cards/travelCardsManager.h"
-#include "../route/route.h"
+#include "passenger.h"
+#include "driver.h"
+#include "bus_stop.h"
+#include "travel_cards_manager.h"
+#include "route.h"
 
 class tms {
 private:

@@ -7,8 +7,8 @@
 
 #include <iostream>
 
-#include "./person.h"
-#include "../date/date.h"
+#include "person.h"
+#include "date.h"
 #include "vehicle.h"
 
 class driver : public person {

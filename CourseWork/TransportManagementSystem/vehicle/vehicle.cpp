@@ -7,7 +7,7 @@
 #include <utility>
 
 bool vehicle::validate_card(travelCard card) {
-    return travelCardsManager::validator(type, card);
+    return travelCardsManager::validator(card);
 }
 
 vehicle::vehicle(uint8_t uid, std::string registrationMark, vehicle::vehicle_type type, uint8_t capacity) : uid(

@@ -7,8 +7,8 @@
 
 #include <iostream>
 
-#include "../travel_cards/travelCardsManager.h"
-#include "../travel_cards/travelCard.h"
+#include "travel_card.h"
+#include "travel_cards_manager.h"
 
 class vehicle {
 public:

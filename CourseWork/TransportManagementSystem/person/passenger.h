@@ -7,8 +7,8 @@
 
 #include <iostream>
 
-#include "./person.h"
-#include "../travel_cards/travelCard.h"
+#include "person.h"
+#include "travel_card.h"
 
 class passenger : public person {
  private:

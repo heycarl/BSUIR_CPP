@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "../date/date.h"
+#include "date.h"
 
 class person {
  private:
@@ -17,7 +17,7 @@ class person {
   std::string last_name;
   date date_of_birth;
  public:
-  std::string serialize();
+    virtual std::string serialize();
 };
 
 #endif //_PERSON_H_
