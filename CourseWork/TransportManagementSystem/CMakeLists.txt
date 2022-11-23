@@ -19,13 +19,11 @@ add_executable(TransportManagementSystem
         date/date.h
         person/passenger.cpp
         person/passenger.h
-        travel_cards/travelCard.cpp
-        travel_cards/travelCard.h
-        travel_cards/travelCardsManager.cpp
-        travel_cards/travelCardsManager.h
+        travel_cards/travel_card.cpp
+        travel_cards/travel_card.h
+        travel_cards/travel_cards_manager.cpp
+        travel_cards/travel_cards_manager.h
         tms/tms.cpp
-        tms/tms.h
-        tms/tui/tui.cpp
-        tms/tui/tui.h)
+        tms/tms.h)
 
-target_include_directories(TransportManagementSystem PRIVATE bus_stop date person tms vehicle travel_cards)
+target_include_directories(TransportManagementSystem PRIVATE route bus_stop date person tms vehicle travel_cards)
