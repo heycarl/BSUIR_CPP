@@ -3,7 +3,7 @@ project(TransportManagementSystem)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(TransportManagementSystem
+set(Sources
         main.cpp
         vehicle/vehicle.cpp
         vehicle/vehicle.h
@@ -24,6 +24,30 @@ add_executable(TransportManagementSystem
         travel_cards/travel_cards_manager.cpp
         travel_cards/travel_cards_manager.h
         tms/tms.cpp
-        tms/tms.h)
+        tms/tms.h
+        tms/tui/tui.cpp
+        tms/tui/tui.h
+        vehicle/vehicle.cpp
+        vehicle/vehicle.h
+        vehicle/bus.cpp
+        vehicle/bus.h
+        vehicle/e_bus.cpp
+        vehicle/e_bus.h
+        vehicle/tram.cpp
+        vehicle/tram.h
+        uid_generator/uid_generator.cpp
+        uid_generator/uid_generator.h)
 
-target_include_directories(TransportManagementSystem PRIVATE route bus_stop date person tms vehicle travel_cards)
+set(Directories
+        route
+        bus_stop
+        date
+        person
+        tms
+        tui
+        vehicle
+        travel_cards
+        uid_generator)
+
+add_executable(TransportManagementSystem main.cpp ${Sources})
+target_include_directories(TransportManagementSystem PRIVATE ${Directories})
