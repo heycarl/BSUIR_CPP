@@ -7,12 +7,14 @@
 
 #include <iostream>
 
-class travelCard {
+#include "uid_generator.h"
+
+class travel_card {
  private:
-  uint8_t uid;
+  UID uid;
   uint8_t remaining_trips;
  public:
-  travelCard(uint8_t holder_uid);
+  travel_card(UID holder_uid);
   uint8_t get_remaining_trips () const;
   void set_remaining_trips (uint8_t remaining_trips);
   void decrement_trips();
