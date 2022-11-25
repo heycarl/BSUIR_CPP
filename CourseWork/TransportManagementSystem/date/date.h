@@ -10,13 +10,12 @@
 class date {
  public:
   uint8_t year = 0;
-  uint8_t month= 0;
+  uint8_t month = 0;
   uint8_t day = 0;
 
-  std::string serialize();
-  std::string serialize(std::string text);
+  std::string serialize () const;
 
-  void set_date(uint8_t y, uint8_t m, uint8_t d);
+  void set_date (uint8_t d, uint8_t m, uint8_t y);
 
 };
 
