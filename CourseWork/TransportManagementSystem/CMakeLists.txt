@@ -23,10 +23,6 @@ set(Sources
         travel_cards/travel_card.h
         travel_cards/travel_cards_manager.cpp
         travel_cards/travel_cards_manager.h
-        tms/tms.cpp
-        tms/tms.h
-        tms/tui/tui.cpp
-        tms/tui/tui.h
         vehicle/vehicle.cpp
         vehicle/vehicle.h
         vehicle/bus.cpp
@@ -36,18 +32,23 @@ set(Sources
         vehicle/tram.cpp
         vehicle/tram.h
         uid_generator/uid_generator.cpp
-        uid_generator/uid_generator.h)
+        uid_generator/uid_generator.h
+        users/user.cpp
+        users/user.h
+        users/user_passenger.cpp
+        users/user_passenger.h
+        users/user_admin.cpp
+        users/user_admin.h users/users_manager.cpp users/users_manager.h)
 
 set(Directories
         route
         bus_stop
         date
         person
-        tms
-        tui
         vehicle
         travel_cards
-        uid_generator)
+        uid_generator
+        users)
 
 add_executable(TransportManagementSystem main.cpp ${Sources})
 target_include_directories(TransportManagementSystem PRIVATE ${Directories})

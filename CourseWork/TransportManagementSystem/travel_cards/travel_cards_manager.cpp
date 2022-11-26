@@ -15,55 +15,23 @@ bool travelCardsManager::validator (travel_card c)
 	}
   return false;
 }
-travelCardsManager::user& travelCardsManager::signup_user ()
+travel_card& travelCardsManager::find_travel_card (UID uid_to_find)
 {
-
-  std::string uname;
-  std::string passwd;
-
-  std::cout << "Enter username: ";
-  std::cin >> uname;
-
-  std::cout << "Enter password: ";
-  std::cin >> passwd;
-
-  user new_user = {
-	  passenger (),
-	  uname,
-	  passwd
-  };
-  users.push_front (new_user);
-  return users.front ();
-}
-travelCardsManager::user& travelCardsManager::find_user (std::string uname)
-{
-  for (auto& u : users)
+  for (auto& c : travel_cards)
 	{
-	  if (u.login == uname)
-		return u;
+	  if (c.get_uid () == uid_to_find)
+		return c;
 	}
-  throw std::runtime_error ("User not found");
+  throw std::runtime_error ("No such card found");
 }
-travelCardsManager::user& travelCardsManager::signin_user ()
+void travelCardsManager::create_if_not_exists (UID u)
 {
-  std::string uname;
-
-  std::cout << "Enter username: ";
-  std::cin >> uname;
-
   try
 	{
-	  user& u = find_user (uname);
-	  std::string passwd;
-	  while (passwd != u.password_hash)
-		{
-		  std::cout << "Enter password: ";
-		  std::cin >> passwd;
-		}
-	  return u;
+	  find_travel_card (u);
 	}
-  catch (std::runtime_error e)
+  catch (std::exception)
 	{
-	  throw std::runtime_error (e);
+	  travel_cards.push_front (travel_card (u));
 	}
 }

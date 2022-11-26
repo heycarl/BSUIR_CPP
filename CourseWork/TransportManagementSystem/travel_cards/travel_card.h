@@ -12,9 +12,13 @@
 class travel_card {
  private:
   UID uid;
+ public:
+  UID get_uid () const;
+  void set_uid (UID u);
+ private:
   uint8_t remaining_trips;
  public:
-  explicit travel_card(UID holder_uid);
+  explicit travel_card(UID);
   uint8_t get_remaining_trips () const;
   void set_remaining_trips (uint8_t remaining_trips);
   void decrement_trips();

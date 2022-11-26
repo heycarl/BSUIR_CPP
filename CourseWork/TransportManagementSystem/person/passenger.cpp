@@ -13,3 +13,19 @@ std::string passenger::serialize ()
 	ss << "Passenger" << person::serialize();
   return person::serialize ();
 }
+UID passenger::get_uid () const
+{
+  return uid;
+}
+void passenger::set_uid (UID u)
+{
+  passenger::uid = u;
+}
+UID passenger::get_card () const
+{
+  return card;
+}
+void passenger::set_card (UID c)
+{
+  passenger::card = c;
+}

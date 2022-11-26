@@ -14,18 +14,11 @@
 class travelCardsManager {
  private:
   std::list<travel_card> travel_cards;
-  struct user {
-	  passenger passenger;
-	  std::string login;
-	  std::string password_hash;
-  };
-  std::list<user> users;
  private:
-  user& find_user(std::string uname);
+  travel_card& find_travel_card(UID);
  public:
+  void create_if_not_exists(UID);
   static bool validator (travel_card);
-  user& signup_user();
-  user& signin_user();
 };
 
 #endif //TRAVELCARDSMANAGER_H_

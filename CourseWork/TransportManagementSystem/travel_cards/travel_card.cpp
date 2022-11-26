@@ -20,3 +20,11 @@ void travel_card::decrement_trips ()
   if (remaining_trips > 0)
     remaining_trips--;
 }
+UID travel_card::get_uid () const
+{
+  return uid;
+}
+void travel_card::set_uid (UID u)
+{
+  travel_card::uid = u;
+}
