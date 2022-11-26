@@ -18,6 +18,7 @@ class person {
   date date_of_birth;
  public:
     virtual std::string serialize();
+	std::string get_first_last_name();
 };
 
 #endif //_PERSON_H_

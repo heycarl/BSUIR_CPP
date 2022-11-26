@@ -33,7 +33,7 @@ travelCardsManager::user& travelCardsManager::signup_user ()
 	  passwd
   };
   users.push_front (new_user);
-  return new_user;
+  return users.front ();
 }
 travelCardsManager::user& travelCardsManager::find_user (std::string uname)
 {
@@ -42,7 +42,7 @@ travelCardsManager::user& travelCardsManager::find_user (std::string uname)
 	  if (u.login == uname)
 		return u;
 	}
-  throw std::exception ();
+  throw std::runtime_error ("User not found");
 }
 travelCardsManager::user& travelCardsManager::signin_user ()
 {
@@ -62,8 +62,8 @@ travelCardsManager::user& travelCardsManager::signin_user ()
 		}
 	  return u;
 	}
-  catch (std::exception)
+  catch (std::runtime_error e)
 	{
-	  throw std::exception ();
+	  throw std::runtime_error (e);
 	}
 }

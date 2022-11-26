@@ -14,7 +14,7 @@ class travel_card {
   UID uid;
   uint8_t remaining_trips;
  public:
-  travel_card(UID holder_uid);
+  explicit travel_card(UID holder_uid);
   uint8_t get_remaining_trips () const;
   void set_remaining_trips (uint8_t remaining_trips);
   void decrement_trips();
