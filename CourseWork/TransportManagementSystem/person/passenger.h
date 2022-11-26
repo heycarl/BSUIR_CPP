@@ -9,11 +9,15 @@
 
 #include "person.h"
 #include "travel_card.h"
+#include "uid_generator.h"
 
 class passenger : public person {
  private:
-  travelCard card;
+  UID uid;
+  travel_card card;
  public:
+  passenger();
+  std::string serialize() override;
 };
 
 #endif //_PASSENGER_H_
