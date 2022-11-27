@@ -57,4 +57,5 @@ std::list<std::string> bus_stop::serialize_options ()
           case coffee_machine:out.emplace_back("Coffee machine");
         }
     }
+	return out;
 }

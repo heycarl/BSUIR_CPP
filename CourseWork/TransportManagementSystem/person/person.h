@@ -8,17 +8,20 @@
 #include <iostream>
 
 #include "date.h"
+#include "uid_generator.h"
 
 class person {
- private:
-  uint8_t uid;
-  std::string first_name;
-  std::string middle_name;
-  std::string last_name;
-  date date_of_birth;
- public:
-    virtual std::string serialize();
+private:
+	UID uid;
+private:
+	std::string first_name;
+	std::string last_name;
+	date date_of_birth;
+public:
+	person();
+	virtual std::string serialize();
 	std::string get_first_last_name();
+	UID get_uid() const;
 };
 
 #endif //_PERSON_H_

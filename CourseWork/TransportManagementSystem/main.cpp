@@ -1,7 +1,13 @@
 #include <iostream>
 
-#include "tms.h"
+#include "users_manager.h"
 
-int main() {
-    return 0;
+int main()
+{
+
+	users_manager umanager = users_manager();
+
+	auto u = umanager.sign_up_passenger();
+	u.buy_trips();
+	return 0;
 }

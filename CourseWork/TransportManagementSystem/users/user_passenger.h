@@ -8,12 +8,11 @@
 #include "user.h"
 #include "passenger.h"
 
-#include "travel_cards_manager.h"
-#include "route.h"
+#include "core.h"
 
 class user_passenger : public user{
  private:
-  passenger me;
+	passenger me;
  public:
   using user::user;
   void buy_trips();

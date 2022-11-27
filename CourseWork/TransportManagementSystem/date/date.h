@@ -6,17 +6,24 @@
 #define _DATE_H_
 
 #include <iostream>
+#include <ctime>
 
 class date {
- public:
-  uint8_t year = 0;
-  uint8_t month = 0;
-  uint8_t day = 0;
+public:
+	uint8_t year = 0;
+	uint8_t month = 0;
+	uint8_t day = 0;
+	date(uint8_t year, uint8_t month, uint8_t day);
+	date(std::string);
+	date() = default;
 
-  std::string serialize () const;
+	std::string serialize() const;
 
-  void set_date (uint8_t d, uint8_t m, uint8_t y);
+	void set_date(uint8_t d, uint8_t m, uint8_t y);
+	void set_date(std::tm);
+	void set_date(std::string);
 
+	static bool date_parser(std::string&, std::tm);
 };
 
 #endif //_DATE_H_

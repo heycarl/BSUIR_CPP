@@ -10,18 +10,16 @@
 #include "person.h"
 #include "uid_generator.h"
 
+#include "core.h"
+
 class passenger : public person {
- public:
-  UID get_uid () const;
-  void set_uid (UID u);
-  UID get_card () const;
-  void set_card (UID c);
- private:
-  UID uid;
-  UID card;
- public:
-  passenger();
-  std::string serialize() override;
+public:
+	passenger();
+private:
+	UID card;
+public:
+	std::string serialize() override;
+	UID get_card() const;
 };
 
 #endif //_PASSENGER_H_

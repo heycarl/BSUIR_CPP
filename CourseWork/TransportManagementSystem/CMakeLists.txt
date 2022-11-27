@@ -38,7 +38,10 @@ set(Sources
         users/user_passenger.cpp
         users/user_passenger.h
         users/user_admin.cpp
-        users/user_admin.h users/users_manager.cpp users/users_manager.h)
+        users/user_admin.h
+        users/users_manager.cpp
+        users/users_manager.h
+        core/core.cpp core/core.h)
 
 set(Directories
         route
@@ -48,7 +51,8 @@ set(Directories
         vehicle
         travel_cards
         uid_generator
-        users)
+        users
+        core)
 
 add_executable(TransportManagementSystem main.cpp ${Sources})
 target_include_directories(TransportManagementSystem PRIVATE ${Directories})
