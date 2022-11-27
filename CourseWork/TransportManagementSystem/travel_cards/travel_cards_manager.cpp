@@ -6,7 +6,7 @@
 
 #include "travel_cards_manager.h"
 
-bool travelCardsManager::validator (travel_card c)
+bool travel_cards_manager::validator (travel_card c)
 {
   if (c.get_remaining_trips () > 0)
 	{
@@ -15,7 +15,7 @@ bool travelCardsManager::validator (travel_card c)
 	}
   return false;
 }
-travel_card& travelCardsManager::find_travel_card (UID uid_to_find)
+travel_card& travel_cards_manager::find_travel_card (UID uid_to_find)
 {
   for (auto& c : travel_cards)
 	{
@@ -24,7 +24,7 @@ travel_card& travelCardsManager::find_travel_card (UID uid_to_find)
 	}
   throw std::runtime_error ("No such card found");
 }
-void travelCardsManager::create_if_not_exists (UID u)
+void travel_cards_manager::create_if_not_exists (UID u)
 {
   try
 	{

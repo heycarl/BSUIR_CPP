@@ -11,7 +11,7 @@
 #include "travel_card.h"
 #include "passenger.h"
 
-class travelCardsManager {
+class travel_cards_manager {
  private:
   std::list<travel_card> travel_cards;
  private:

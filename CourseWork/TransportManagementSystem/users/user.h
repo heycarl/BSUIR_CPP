@@ -12,7 +12,7 @@ class user {
   std::string login;
   std::string password;
  public:
-  user (const std::string& login, const std::string& password);
+  user (std::string login, std::string password);
   user ();
   bool validate_credentials(std::string, std::string);
 };

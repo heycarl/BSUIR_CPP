@@ -3,8 +3,8 @@
 //
 
 #include "user.h"
-user::user (const std::string& login, const std::string& password)
-	: login (login), password (password)
+user::user (std::string login, std::string password)
+	: login (std::move (login)), password (std::move (password))
 {}
 bool user::validate_credentials (std::string validating_login, std::string validating_password)
 {

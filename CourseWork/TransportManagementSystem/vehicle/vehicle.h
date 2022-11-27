@@ -25,8 +25,9 @@ private:
 public:
     vehicle(uint8_t uid, std::string registrationMark, vehicle_type type, uint8_t capacity);
 
-    bool validate_card(travelCard);
+    bool validate_card(travel_card);
     virtual int get_remaining_travel_distance();
+	static std::string serialize_vehicle_type(vehicle_type);
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_VEHICLE_H_
