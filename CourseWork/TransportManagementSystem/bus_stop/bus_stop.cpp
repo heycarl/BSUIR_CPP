@@ -9,33 +9,17 @@ uint8_t bus_stop::get_uid () const
 {
   return uid;
 }
-void bus_stop::set_uid (uint8_t uid)
+void bus_stop::set_uid (uint8_t u)
 {
-  bus_stop::uid = uid;
+  bus_stop::uid = u;
 }
 const std::string &bus_stop::get_name () const
 {
   return name;
 }
-void bus_stop::set_name (const std::string &name)
+void bus_stop::set_name (const std::string &n)
 {
-  bus_stop::name = name;
-}
-double bus_stop::get_latitude () const
-{
-  return latitude;
-}
-void bus_stop::set_latitude (double d)
-{
-  bus_stop::latitude = d;
-}
-double bus_stop::get_longitude () const
-{
-  return longitude;
-}
-void bus_stop::set_longitude (double d)
-{
-  bus_stop::longitude = d;
+  bus_stop::name = n;
 }
 std::list<bus_stop::stop_options> bus_stop::get_options () const
 {
@@ -59,3 +43,16 @@ std::list<std::string> bus_stop::serialize_options ()
     }
 	return out;
 }
+std::string bus_stop::get_coords() const
+{
+	std::stringstream ss;
+	ss << "Coordinates: " << longitude << " " << latitude << std::endl;
+	return ss.str();
+}
+void bus_stop::set_coords(double lon, double lat)
+{
+	longitude = lon;
+	latitude = lat;
+}
+bus_stop::bus_stop(const std::string& name, double latitude, double longitude)
+		:uid(uidGenerator::generate()), name(name), latitude(latitude), longitude(longitude) { }
