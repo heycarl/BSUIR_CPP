@@ -17,6 +17,7 @@ private:
 	std::string name;
 	double latitude;
 	double longitude;
+	std::string get_options_string();
 public:
 	bus_stop(const std::string& name, double latitude, double longitude);
 	UID get_uid() const;
@@ -34,6 +35,7 @@ public:
 	std::list<stop_options> get_options() const;
 	void set_options(std::list<stop_options> stop_options);
 	std::list<std::string> serialize_options();
+	std::string serialize_stop();
 private:
 	std::list<stop_options> options;
 };

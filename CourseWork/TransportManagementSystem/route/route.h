@@ -9,14 +9,13 @@
 #include <list>
 
 #include "bus_stop.h"
-#include "driver.h"
-
+#include "uid_generator.h"
 class route {
  private:
   struct stop {
     bus_stop bus_stop;
     time_t arrival_time = 0;
-    bool need_to_stop = false;
+    bool need_to_stop = true;
   };
   struct route_info {
 	  std::string point_1_name;
@@ -24,15 +23,10 @@ class route {
   };
   std::list<stop> route;
   route_info route_info;
-  driver route_driver;
- public:
-  const driver &get_route_driver () const;
-  void set_route_driver (const driver &driver);
+  UID route_driver;
  public:
   std::string serialize_route();
   void delete_stop(uint8_t id);
-  void delete_stop();
-  void add_stop(int id);
   void add_stop();
 
   std::string view_driver();

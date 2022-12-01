@@ -41,7 +41,11 @@ set(Sources
         users/user_admin.h
         users/users_manager.cpp
         users/users_manager.h
-        core/core.cpp core/core.h)
+        core/core.cpp core/core.h
+        route/routes_manager.cpp
+        route/routes_manager.h
+        bus_stop/bus_stops_manager.cpp
+        bus_stop/bus_stops_manager.h)
 
 set(Directories
         route
