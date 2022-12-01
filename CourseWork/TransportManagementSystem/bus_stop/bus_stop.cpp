@@ -47,7 +47,7 @@ std::list<std::string> bus_stop::serialize_options()
 std::string bus_stop::get_coords() const
 {
 	std::stringstream ss;
-	ss << "Coordinates: " << longitude << " " << latitude << std::endl;
+	ss << "Coordinates: " << longitude << " " << latitude;
 	return ss.str();
 }
 void bus_stop::set_coords(double lon, double lat)
@@ -61,9 +61,10 @@ std::string bus_stop::serialize_stop()
 {
 	std::stringstream ss;
 	ss << "-- " << get_name() << " --" << std::endl
-	   << "UID: " << get_uid() << std::endl
+	   << "UID: " << +get_uid() << std::endl
 	   << "Coordinates: " << get_coords() << std::endl
-	   << "Options: " << get_options_string() << std::endl;
+	   << "Options: " << get_options_string() << std::endl
+	   << "--" << std::endl;
 	return ss.str();
 }
 std::string bus_stop::get_options_string()

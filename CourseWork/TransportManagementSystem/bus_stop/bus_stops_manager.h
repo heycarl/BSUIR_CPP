@@ -17,7 +17,7 @@ private:
 	std::list<bus_stop> l_bus_stops;
 public:
 	bus_stop& find_bus_stop(UID);
-	bus_stop& add_bus_stop();
+	bus_stop& add_bus_stop(std::string, double, double);
 	std::string serialize_all_bus_stops();
 };
 
