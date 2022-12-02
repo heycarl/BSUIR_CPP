@@ -8,6 +8,7 @@
 #include <iostream>
 #include <list>
 #include <sstream>
+#include <map>
 
 #include "uid_generator.h"
 
@@ -32,9 +33,15 @@ public:
 		usb_charger,
 		coffee_machine
 	};
+	std::map<stop_options, std::string> options_and_names = {
+			{stop_options::coffee_machine, "Coffe Machine"},
+			{stop_options::rain_cover, "Rain cover"},
+			{stop_options::usb_charger, "USB Charger"}
+	};
 	std::list<stop_options> get_options() const;
 	void set_options(std::list<stop_options> stop_options);
 	std::list<std::string> serialize_options();
+	std::string view_existing_options();
 	std::string serialize_stop();
 private:
 	std::list<stop_options> options;

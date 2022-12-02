@@ -16,6 +16,7 @@ class user_admin : public user {
   void create_vehicle();
   void create_bus_stop();
   void view_bus_stops();
+  void modify_bus_stop();
   void create_route();
   void route_serialize_stats();
   void route_serialize_information();

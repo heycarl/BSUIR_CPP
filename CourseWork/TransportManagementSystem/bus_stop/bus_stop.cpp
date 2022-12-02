@@ -5,6 +5,7 @@
 #include "bus_stop.h"
 
 #include <utility>
+
 uint8_t bus_stop::get_uid() const
 {
 	return uid;
@@ -33,14 +34,7 @@ std::list<std::string> bus_stop::serialize_options()
 {
 	std::list<std::string> out;
 	for (auto o : bus_stop::options) {
-		switch (o) {
-		case rain_cover:
-			out.emplace_back("Rain cover");
-		case usb_charger:
-			out.emplace_back("USB charger");
-		case coffee_machine:
-			out.emplace_back("Coffee machine");
-		}
+		out.push_front(options_and_names[o]);
 	}
 	return out;
 }
@@ -73,8 +67,15 @@ std::string bus_stop::get_options_string()
 		return "";
 	std::stringstream ss;
 	for (auto& option : options) {
-		ss << option << (option==options.front() ? "" : ", ");
+		ss << options_and_names[option] << (option==options.back() ? "" : ", ");
 	}
-	ss << std::endl;
+	return ss.str();
+}
+std::string bus_stop::view_existing_options()
+{
+	std::stringstream ss;
+	for (auto o : options_and_names) {
+		ss << "[" << o.first << "] " << o.second << std::endl;
+	}
 	return ss.str();
 }

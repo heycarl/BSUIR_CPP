@@ -26,3 +26,14 @@ std::string bus_stops_manager::serialize_all_bus_stops()
 	}
 	return ss.str();
 }
+std::string bus_stops_manager::serialize_all_bus_stops_names()
+{
+	std::stringstream ss;
+	ss << "[ ";
+	for (auto& stop : l_bus_stops) {
+		ss << +stop.get_uid() << " "
+		   << stop.get_name() << " | ";
+	}
+	ss << " ]" << std::endl;
+	return ss.str();
+}
