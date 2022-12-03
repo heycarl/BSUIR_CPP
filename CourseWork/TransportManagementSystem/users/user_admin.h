@@ -13,6 +13,8 @@ class user_admin : public user {
  public:
   using user::user;
   void create_driver();
+  void view_drivers();
+  void modify_driver(); // todo
   void create_vehicle();
   void create_bus_stop();
   void view_bus_stops();

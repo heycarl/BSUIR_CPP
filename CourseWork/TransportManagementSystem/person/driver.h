@@ -16,7 +16,8 @@ class driver : public person {
   date license_expiration;
   vehicle::vehicle_type license_type = vehicle::vehicle_type::bus; // default license
  public:
-  std::string serialize() override {
+	driver(const date& license_expiration, vehicle::vehicle_type license_type);
+	std::string serialize() override {
     return person::serialize() += serialize_license();
   };
   std::string serialize_license();

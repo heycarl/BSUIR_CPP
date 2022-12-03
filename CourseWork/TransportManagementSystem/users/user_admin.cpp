@@ -69,3 +69,29 @@ void user_admin::modify_bus_stop()
 	}
 	}
 }
+void user_admin::create_driver()
+{
+	std::string vehicle_type;
+	std::cout << "Enter license vehicle type ( "
+			  << ([]() -> std::string {
+				std::stringstream ss;
+				for (auto i = vehicle::vehicle_type_string.begin();;) {
+					ss << i->second;
+					if (++i==vehicle::vehicle_type_string.end())
+						break;
+					ss << ", ";
+				}
+				return ss.str();
+			  }).operator()()
+			  << " ): ";
+	std::cin >> vehicle_type;
+
+	std::string exp_date;
+	std::cout << "Enter license expiration date in \"dd.mm.yy\" notation: ";
+	std::cin >> exp_date;
+	core::dm.add_driver(vehicle_type, exp_date);
+}
+void user_admin::view_drivers()
+{
+	std::cout << core::dm.serialize_all_drivers();
+}

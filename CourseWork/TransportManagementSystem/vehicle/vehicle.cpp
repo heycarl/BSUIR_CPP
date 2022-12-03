@@ -35,7 +35,7 @@ std::string vehicle::serialize_vehicle_type(vehicle::vehicle_type t)
 vehicle::vehicle_type vehicle::parse_vehicle_type(std::string t)
 {
 	for (auto vt : vehicle_type_string) {
-		if (t.find(t.find(vt.second)))
+		if (vt.second == t)
 			return vt.first;
 	}
 	throw std::runtime_error("No such vehicle type");

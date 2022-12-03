@@ -9,6 +9,7 @@ std::string person::serialize ()
   std::stringstream ss;
   ss << "Name: " << first_name
 	 << " " << last_name << std::endl
+	 << "UID: " << +uid << std::endl
 	 << "Date of birth: "
 	 << date_of_birth.serialize () << std::endl;
   return ss.str ();

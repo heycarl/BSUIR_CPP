@@ -11,3 +11,5 @@ std::string driver::serialize_license ()
 	 << " valid until " << license_expiration.serialize ();
   return ss.str ();
 }
+driver::driver(const date& license_expiration, vehicle::vehicle_type license_type)
+		:license_expiration(license_expiration), license_type(license_type) { }
