@@ -9,15 +9,13 @@
 
 class bus : public vehicle {
 private:
-    uint8_t fuel_bank_size;
-    uint8_t current_bank_size;
-    double fuel_consumption;
+	uint8_t fuel_bank_size;
+	double fuel_consumption;
 public:
-    bus(uint8_t uid, const std::string &registrationMark, uint8_t capacity, uint8_t fuelBankSize,
-        uint8_t currentBankSize, double fuelConsumption);
+	bus(std::string, uint8_t, uint8_t, double);
 
-    int get_remaining_travel_distance() override;
+	int get_travel_distance() override;
+	std::string serialize() override;
 };
-
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_BUS_H

@@ -7,9 +7,12 @@
 
 #include <iostream>
 #include <map>
+#include <sstream>
+
 
 #include "travel_card.h"
 #include "travel_cards_manager.h"
+#include "uid_generator.h"
 
 class vehicle {
 public:
@@ -20,17 +23,23 @@ public:
     };
 	static std::map<vehicle_type, std::string> vehicle_type_string;
 private:
-    uint8_t uid;
+    UID uid;
     std::string registration_mark;
     vehicle_type type;
     uint8_t capacity;
 public:
-    vehicle(uint8_t uid, std::string registrationMark, vehicle_type v_type, uint8_t capacity);
-
-    bool validate_card(travel_card);
-    virtual int get_remaining_travel_distance();
+	UID get_uid() const;
+	const std::string& get_registration_mark() const;
+	vehicle_type get_type() const;
+	uint8_t get_capacity() const;
+	vehicle(std::string registrationMark, vehicle::vehicle_type type, uint8_t capacity);
+	bool validate_card(travel_card);
+	virtual int get_travel_distance();
+	virtual std::string serialize();
+public:
 	static std::string serialize_vehicle_type(vehicle_type);
 	static vehicle_type parse_vehicle_type(std::string);
+	static std::string view_existing_types();
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_VEHICLE_H_

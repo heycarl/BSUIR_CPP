@@ -9,6 +9,7 @@
 #include "routes_manager.h"
 #include "bus_stops_manager.h"
 #include "drivers_manager.h"
+#include "vehicles_manager.h"
 
 class core {
 public:
@@ -16,5 +17,6 @@ public:
 	static routes_manager rm;
 	static bus_stops_manager bsm;
 	static drivers_manager dm;
+	static vehicles_manager vm;
 };
 #endif //TRANSPORTMANAGEMENTSYSTEM_CORE_H

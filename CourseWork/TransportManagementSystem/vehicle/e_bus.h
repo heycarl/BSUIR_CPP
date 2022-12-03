@@ -7,15 +7,13 @@
 
 #include "vehicle.h"
 
-class e_bus : public vehicle{
+class e_bus : public vehicle {
 private:
-    double battery_charge;
-    double battery_consumption;
+	double battery_consumption;
 public:
-    e_bus(uint8_t uid, const std::string &registrationMark, uint8_t capacity, double batteryCharge,
-          double batteryConsumption);
-    int get_remaining_travel_distance() override;
+	e_bus(const std::string& registrationMark, uint8_t capacity,
+			double batteryConsumption);
+	int get_travel_distance() override;
 };
-
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_E_BUS_H

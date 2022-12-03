@@ -45,7 +45,11 @@ set(Sources
         route/routes_manager.cpp
         route/routes_manager.h
         bus_stop/bus_stops_manager.cpp
-        bus_stop/bus_stops_manager.h person/drivers_manager.cpp person/drivers_manager.h)
+        bus_stop/bus_stops_manager.h
+        person/drivers_manager.cpp
+        person/drivers_manager.h
+        vehicle/vehicles_manager.cpp
+        vehicle/vehicles_manager.h)
 
 set(Directories
         route

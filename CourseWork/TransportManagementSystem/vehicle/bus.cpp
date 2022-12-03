@@ -4,13 +4,22 @@
 
 #include "bus.h"
 
-int bus::get_remaining_travel_distance() {
-    return static_cast<int>(current_bank_size / fuel_consumption);
+int bus::get_travel_distance()
+{
+	return static_cast<int>(fuel_bank_size/fuel_consumption);
 }
 
-bus::bus(uint8_t uid, const std::string &registrationMark, uint8_t capacity,
-         uint8_t fuelBankSize, uint8_t currentBankSize, double fuelConsumption) : vehicle(uid, registrationMark, vehicle_type::bus,
-                                                                                          capacity),
-                                                                                  fuel_bank_size(fuelBankSize),
-                                                                                  current_bank_size(currentBankSize),
-                                                                                  fuel_consumption(fuelConsumption) {}
+bus::bus(std::string registration_mark, uint8_t capacity,
+		uint8_t fuel_bank_size, double fuel_consumption = 0.5)
+		:vehicle(registration_mark,
+		vehicle_type::bus,
+		capacity),
+		 fuel_consumption(fuel_consumption),
+		 fuel_bank_size(fuel_bank_size) { }
+std::string bus::serialize()
+{
+	std::stringstream ss;
+	ss << vehicle::serialize() << std::endl
+	   << "Travel distance: " << get_travel_distance();
+	return ss.str();
+}

@@ -72,18 +72,7 @@ void user_admin::modify_bus_stop()
 void user_admin::create_driver()
 {
 	std::string vehicle_type;
-	std::cout << "Enter license vehicle type ( "
-			  << ([]() -> std::string {
-				std::stringstream ss;
-				for (auto i = vehicle::vehicle_type_string.begin();;) {
-					ss << i->second;
-					if (++i==vehicle::vehicle_type_string.end())
-						break;
-					ss << ", ";
-				}
-				return ss.str();
-			  }).operator()()
-			  << " ): ";
+	std::cout << "Enter license vehicle type ( " << vehicle::view_existing_types() << " ): ";
 	std::cin >> vehicle_type;
 
 	std::string exp_date;
@@ -94,4 +83,59 @@ void user_admin::create_driver()
 void user_admin::view_drivers()
 {
 	std::cout << core::dm.serialize_all_drivers();
+}
+void user_admin::create_vehicle()
+{
+	std::cout << "Enter new vehicle type (" << vehicle::view_existing_types() << "): ";
+	std::string new_vehicle_type;
+	std::cin >> new_vehicle_type;
+
+	switch (vehicle::parse_vehicle_type(new_vehicle_type)) {
+	case vehicle::bus: {
+		double consumption;
+		std::string registration_mark;
+		int capacity;
+		int bank_size;
+
+		std::cout << "Enter registration mark: ";
+		std::cin >> registration_mark;
+		std::cout << "Enter passenger capacity: ";
+		std::cin >> capacity;
+		std::cout << "Enter fuel bank size: ";
+		std::cin >> bank_size;
+		std::cout << "Enter fuel consumption: ";
+		std::cin >> consumption;
+		core::vm.add_bus(registration_mark, capacity, bank_size, consumption);
+		break;
+	}
+	case vehicle::e_bus: {
+		// todo
+	}
+	case vehicle::tram: {
+		// todo
+	}
+	default:
+		throw std::runtime_error("No such vehicle type");
+	}
+}
+void user_admin::view_vehicles()
+{
+	std::cout << "Enter vehicle type to view (" << vehicle::view_existing_types() << "): ";
+	std::string new_vehicle_type;
+	std::cin >> new_vehicle_type;
+
+	switch (vehicle::parse_vehicle_type(new_vehicle_type)) {
+	case vehicle::bus: {
+		std::cout << core::vm.serialize_all_buses() << std::endl;
+		break;
+	}
+	case vehicle::e_bus: {
+		// todo
+	}
+	case vehicle::tram: {
+		// todo
+	}
+	default:
+		throw std::runtime_error("No such vehicle type");
+	}
 }

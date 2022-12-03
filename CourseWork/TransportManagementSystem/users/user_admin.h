@@ -16,6 +16,7 @@ class user_admin : public user {
   void view_drivers();
   void modify_driver(); // todo
   void create_vehicle();
+  void view_vehicles();
   void create_bus_stop();
   void view_bus_stops();
   void modify_bus_stop();
