@@ -90,17 +90,20 @@ void user_admin::create_vehicle()
 	std::string new_vehicle_type;
 	std::cin >> new_vehicle_type;
 
-	switch (vehicle::parse_vehicle_type(new_vehicle_type)) {
+	auto new_type = vehicle::parse_vehicle_type(new_vehicle_type);
+
+	std::string registration_mark;
+	std::cout << "Enter registration mark: ";
+	std::cin >> registration_mark;
+	int capacity;
+	std::cout << "Enter passenger capacity: ";
+	std::cin >> capacity;
+	double consumption;
+
+	switch (new_type) {
 	case vehicle::bus: {
-		double consumption;
-		std::string registration_mark;
-		int capacity;
 		int bank_size;
 
-		std::cout << "Enter registration mark: ";
-		std::cin >> registration_mark;
-		std::cout << "Enter passenger capacity: ";
-		std::cin >> capacity;
 		std::cout << "Enter fuel bank size: ";
 		std::cin >> bank_size;
 		std::cout << "Enter fuel consumption: ";
@@ -109,10 +112,14 @@ void user_admin::create_vehicle()
 		break;
 	}
 	case vehicle::e_bus: {
-		// todo
+		std::cout << "Enter fuel consumption: ";
+		std::cin >> consumption;
+		core::vm.add_e_bus(registration_mark, capacity, consumption);
+		break;
 	}
 	case vehicle::tram: {
-		// todo
+		core::vm.add_tram(registration_mark, capacity);
+		break;
 	}
 	default:
 		throw std::runtime_error("No such vehicle type");
@@ -120,9 +127,15 @@ void user_admin::create_vehicle()
 }
 void user_admin::view_vehicles()
 {
-	std::cout << "Enter vehicle type to view (" << vehicle::view_existing_types() << "): ";
+	std::cout << "Enter vehicle type to view (" << vehicle::view_existing_types() << ", All ): ";
 	std::string new_vehicle_type;
 	std::cin >> new_vehicle_type;
+	if (new_vehicle_type=="All") {
+		std::cout << core::vm.serialize_all_buses() << std::endl;
+		std::cout << core::vm.serialize_all_e_buses() << std::endl;
+		std::cout << core::vm.serialize_all_trams() << std::endl;
+		return;
+	}
 
 	switch (vehicle::parse_vehicle_type(new_vehicle_type)) {
 	case vehicle::bus: {
@@ -130,10 +143,12 @@ void user_admin::view_vehicles()
 		break;
 	}
 	case vehicle::e_bus: {
-		// todo
+		std::cout << core::vm.serialize_all_e_buses() << std::endl;
+		break;
 	}
 	case vehicle::tram: {
-		// todo
+		std::cout << core::vm.serialize_all_trams() << std::endl;
+		break;
 	}
 	default:
 		throw std::runtime_error("No such vehicle type");

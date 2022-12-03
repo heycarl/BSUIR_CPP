@@ -9,7 +9,7 @@
 
 class tram : public vehicle {
 public:
-    tram(uint8_t uid, const std::string &registrationMark, uint8_t capacity);
+    tram(std::string, uint8_t);
 };
 
 

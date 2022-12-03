@@ -4,5 +4,5 @@
 
 #include "tram.h"
 
-tram::tram(uint8_t uid, const std::string &registrationMark, uint8_t capacity) :vehicle(registrationMark,
+tram::tram(std::string registration_mark, uint8_t capacity) :vehicle(registration_mark,
 		vehicle_type::tram, capacity) {}

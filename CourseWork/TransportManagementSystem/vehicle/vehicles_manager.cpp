@@ -28,3 +28,51 @@ std::string vehicles_manager::serialize_all_buses()
 	ss << "--------------------------\n";
 	return ss.str();
 }
+e_bus& vehicles_manager::find_e_bus(UID uid_to_find)
+{
+	for (auto& e_bus : l_e_buses) {
+		if (e_bus.get_uid()==uid_to_find)
+			return e_bus;
+	}
+	throw std::runtime_error("No such e-bus");
+}
+e_bus& vehicles_manager::add_e_bus(std::string registration_mark, uint8_t capacity, double battery_consumption)
+{
+	auto new_e_bus = e_bus(registration_mark, capacity, battery_consumption);
+	l_e_buses.push_front(new_e_bus);
+	return l_e_buses.front();
+}
+std::string vehicles_manager::serialize_all_e_buses()
+{
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& e_bus : l_e_buses) {
+		ss << e_bus.serialize() << std::endl;
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}
+tram& vehicles_manager::find_tram(UID uid_to_find)
+{
+	for (auto& tram : l_trams) {
+		if (tram.get_uid()==uid_to_find)
+			return tram;
+	}
+	throw std::runtime_error("No such tram");
+}
+tram& vehicles_manager::add_tram(std::string registration_mark, uint8_t capacity)
+{
+	auto new_tram = tram(registration_mark, capacity);
+	l_trams.push_front(new_tram);
+	return l_trams.front();
+}
+std::string vehicles_manager::serialize_all_trams()
+{
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& tram : l_trams) {
+		ss << tram.serialize() << std::endl;
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}

@@ -4,10 +4,10 @@
 
 #include "e_bus.h"
 
-e_bus::e_bus(const std::string& registrationMark, uint8_t capacity, double batteryConsumption = 0.1)
-		:vehicle(registrationMark, vehicle_type::e_bus,
+e_bus::e_bus(std::string registration_mark, uint8_t capacity, double battery_consumption = 0.1)
+		:vehicle(registration_mark, vehicle_type::e_bus,
 		capacity),
-		 battery_consumption(batteryConsumption) { }
+		 battery_consumption(battery_consumption) { }
 
 int e_bus::get_travel_distance()
 {

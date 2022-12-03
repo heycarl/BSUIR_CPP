@@ -11,8 +11,8 @@ class e_bus : public vehicle {
 private:
 	double battery_consumption;
 public:
-	e_bus(const std::string& registrationMark, uint8_t capacity,
-			double batteryConsumption);
+	e_bus(std::string registration_mark, uint8_t capacity,
+			double battery_consumption);
 	int get_travel_distance() override;
 };
 
