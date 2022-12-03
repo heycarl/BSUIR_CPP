@@ -5,6 +5,13 @@
 #include "vehicle.h"
 
 #include <utility>
+#include <algorithm>
+
+std::map<vehicle::vehicle_type, std::string> vehicle::vehicle_type_string = {
+		{ bus, "Bus" },
+		{ e_bus, "Electro-bus" },
+		{ tram, "Tram" }
+};
 
 bool vehicle::validate_card(travel_card card)
 {
@@ -21,13 +28,15 @@ int vehicle::get_remaining_travel_distance()
 }
 std::string vehicle::serialize_vehicle_type(vehicle::vehicle_type t)
 {
-	switch (t) {
-	case bus:
-		return "BUS";
-	case e_bus:
-		return "Electronic-Bus";
-	case tram:
-		return "Tram";
+	if (vehicle_type_string.find(t)==vehicle_type_string.end())
+		return "Unknown";
+	return vehicle_type_string[t];
+}
+vehicle::vehicle_type vehicle::parse_vehicle_type(std::string t)
+{
+	for (auto vt : vehicle_type_string) {
+		if (t.find(t.find(vt.second)))
+			return vt.first;
 	}
-	return "Unknown";
+	throw std::runtime_error("No such vehicle type");
 }
