@@ -7,9 +7,9 @@ int main()
 
 	auto u = umanager.sign_up_admin();
 	u.create_vehicle();
-	u.create_vehicle();
-	u.create_vehicle();
-	u.view_vehicles();
+	u.create_driver();
+	u.create_route();
+	u.route_serialize_information();
 //	u.create_bus_stop();
 //	u.view_bus_stops();
 //	u.modify_bus_stop();

@@ -28,6 +28,8 @@ public:
 	tram& find_tram(UID);
 	tram& add_tram(std::string, uint8_t);
 	std::string serialize_all_trams();
+
+	bool check_if_vehicle_exists(UID);
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_VEHICLES_MANAGER_H

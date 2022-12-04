@@ -20,6 +20,9 @@ bus& vehicles_manager::add_bus(std::string registration_mark, uint8_t capacity, 
 }
 std::string vehicles_manager::serialize_all_buses()
 {
+	if (l_buses.empty()) {
+		return "empty buses list";
+	}
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& bus : l_buses) {
@@ -44,6 +47,9 @@ e_bus& vehicles_manager::add_e_bus(std::string registration_mark, uint8_t capaci
 }
 std::string vehicles_manager::serialize_all_e_buses()
 {
+	if (l_e_buses.empty()) {
+		return "empty e_buses list";
+	}
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& e_bus : l_e_buses) {
@@ -68,6 +74,9 @@ tram& vehicles_manager::add_tram(std::string registration_mark, uint8_t capacity
 }
 std::string vehicles_manager::serialize_all_trams()
 {
+	if (l_trams.empty()) {
+		return "empty trams list";
+	}
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& tram : l_trams) {
@@ -75,4 +84,20 @@ std::string vehicles_manager::serialize_all_trams()
 	}
 	ss << "--------------------------\n";
 	return ss.str();
+}
+bool vehicles_manager::check_if_vehicle_exists(UID uid_to_find)
+{
+	for (auto& bus : l_buses) {
+		if (bus.get_uid()==uid_to_find)
+			return true;
+	}
+	for (auto& e_bus : l_e_buses) {
+		if (e_bus.get_uid()==uid_to_find)
+			return true;
+	}
+	for (auto& tram : l_trams) {
+		if (tram.get_uid()==uid_to_find)
+			return true;
+	}
+	return false;
 }

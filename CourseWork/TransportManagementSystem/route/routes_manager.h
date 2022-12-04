@@ -14,7 +14,7 @@ class routes_manager {
 private:
 	std::list<route> l_routes;
 public:
-	route& add_route();
+	route& add_route(UID vehicle, UID driver, std::string src_point, std::string dst_point);
 	route& find_route(UID);
 	std::string serialize_all_routes_path();
 };

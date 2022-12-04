@@ -154,3 +154,44 @@ void user_admin::view_vehicles()
 		throw std::runtime_error("No such vehicle type");
 	}
 }
+void user_admin::create_route()
+{
+	std::cout << core::vm.serialize_all_buses() << std::endl;
+	std::cout << core::vm.serialize_all_e_buses() << std::endl;
+	std::cout << core::vm.serialize_all_trams() << std::endl;
+	std::cout << core::dm.serialize_all_drivers() << std::endl;
+
+	std::cout << "Select vehicle for new route" << std::endl;
+	int selected_vehicle;
+	std::cin >> selected_vehicle;
+	if (!core::vm.check_if_vehicle_exists(selected_vehicle))
+		throw std::runtime_error("No such vehicle");
+
+	std::cout << "Select driver for new route" << std::endl;
+	int selected_driver;
+	std::cin >> selected_driver;
+	if (!core::dm.check_if_driver_exists(selected_driver))
+		throw std::runtime_error("No such driver");
+
+	std::cout << "Enter source point" << std::endl;
+	std::string src;
+	std::cin >> src;
+
+	std::cout << "Enter destination point" << std::endl;
+	std::string dst;
+	std::cin >> dst;
+	core::rm.add_route(selected_vehicle, selected_driver, src, dst);
+}
+void user_admin::route_serialize_information()
+{
+	std::cout << core::rm.serialize_all_routes_path() << std::endl;
+	std::cout << "Select route to serialize: " << std::endl;
+	int selected_route;
+	std::cin >> selected_route;
+	try {
+		auto& route = core::rm.find_route(selected_route);
+		std::cout << route.serialize_full_route() << std::endl;
+	} catch (std::runtime_error e) {
+		throw e;
+	}
+}

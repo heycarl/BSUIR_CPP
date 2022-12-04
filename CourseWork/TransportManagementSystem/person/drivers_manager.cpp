@@ -24,9 +24,22 @@ driver& drivers_manager::add_driver(std::string vehicle_type, std::string exp_da
 }
 std::string drivers_manager::serialize_all_drivers()
 {
+	if (l_drivers.empty()) {
+		return "empty drivers list";
+	}
 	std::stringstream ss;
+	ss << "--------------------------\n";
 	for (auto& driver : l_drivers) {
 		ss << driver.serialize();
 	}
+	ss << "--------------------------\n";
 	return ss.str();
+}
+bool drivers_manager::check_if_driver_exists(UID uid_to_find)
+{
+	for (auto& d : l_drivers) {
+		if (d.get_uid()==uid_to_find)
+			return true;
+	}
+	return false;
 }

@@ -18,8 +18,8 @@ bool vehicle::validate_card(travel_card card)
 	return travel_cards_manager::validator(card);
 }
 
-vehicle::vehicle(std::string registrationMark, vehicle::vehicle_type type, uint8_t capacity)
-		:uid(uidGenerator::generate()), registration_mark(std::move(registrationMark)), type(type),
+vehicle::vehicle(std::string registration_mark, vehicle::vehicle_type type, uint8_t capacity)
+		:uid(uidGenerator::generate()), registration_mark(std::move(registration_mark)), type(type),
 		 capacity(capacity) { }
 
 int vehicle::get_travel_distance()

@@ -15,7 +15,7 @@ void date::set_date(uint8_t y, uint8_t m, uint8_t d)
 std::string date::serialize() const
 {
 	std::stringstream ss;
-	ss << day << "." << month << "." << year;
+	ss << +day << "." << +month << "." << +year;
 	return ss.str();
 }
 date::date(uint8_t year, uint8_t month, uint8_t day)

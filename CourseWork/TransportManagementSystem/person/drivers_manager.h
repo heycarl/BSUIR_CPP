@@ -14,6 +14,8 @@ public:
 	driver& find_driver(UID);
 	driver& add_driver(std::string, std::string);
 	std::string serialize_all_drivers();
+
+	bool check_if_driver_exists(UID);
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_DRIVERS_MANAGER_H
