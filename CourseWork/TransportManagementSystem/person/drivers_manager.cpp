@@ -30,7 +30,7 @@ std::string drivers_manager::serialize_all_drivers()
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& driver : l_drivers) {
-		ss << driver.serialize();
+		ss << driver.serialize_ui();
 	}
 	ss << "--------------------------\n";
 	return ss.str();

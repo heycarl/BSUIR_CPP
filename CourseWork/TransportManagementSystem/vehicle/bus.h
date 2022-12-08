@@ -15,7 +15,7 @@ public:
 	bus(std::string, uint8_t, uint8_t, double);
 
 	int get_travel_distance() override;
-	std::string serialize() override;
+	std::string serialize_ui() override;
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_BUS_H

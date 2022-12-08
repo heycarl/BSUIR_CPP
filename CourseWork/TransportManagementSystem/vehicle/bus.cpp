@@ -16,10 +16,10 @@ bus::bus(std::string registration_mark, uint8_t capacity,
 		capacity),
 		 fuel_consumption(fuel_consumption),
 		 fuel_bank_size(fuel_bank_size) { }
-std::string bus::serialize()
+std::string bus::serialize_ui()
 {
 	std::stringstream ss;
-	ss << vehicle::serialize() << std::endl
+	ss << vehicle::serialize_ui() << std::endl
 	   << "Travel distance: " << get_travel_distance();
 	return ss.str();
 }

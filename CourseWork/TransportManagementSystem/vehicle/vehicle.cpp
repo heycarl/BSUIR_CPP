@@ -67,7 +67,7 @@ std::string vehicle::view_existing_types()
 	}
 	return ss.str();
 }
-std::string vehicle::serialize()
+std::string vehicle::serialize_ui()
 {
 	std::stringstream ss;
 	ss << "[" << serialize_vehicle_type(type) << "-" << +uid << "]" << std::endl

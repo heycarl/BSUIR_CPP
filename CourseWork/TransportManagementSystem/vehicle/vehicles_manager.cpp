@@ -26,7 +26,7 @@ std::string vehicles_manager::serialize_all_buses()
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& bus : l_buses) {
-		ss << bus.serialize() << std::endl;
+		ss << bus.serialize_ui() << std::endl;
 	}
 	ss << "--------------------------\n";
 	return ss.str();
@@ -53,7 +53,7 @@ std::string vehicles_manager::serialize_all_e_buses()
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& e_bus : l_e_buses) {
-		ss << e_bus.serialize() << std::endl;
+		ss << e_bus.serialize_ui() << std::endl;
 	}
 	ss << "--------------------------\n";
 	return ss.str();
@@ -80,7 +80,7 @@ std::string vehicles_manager::serialize_all_trams()
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& tram : l_trams) {
-		ss << tram.serialize() << std::endl;
+		ss << tram.serialize_ui() << std::endl;
 	}
 	ss << "--------------------------\n";
 	return ss.str();

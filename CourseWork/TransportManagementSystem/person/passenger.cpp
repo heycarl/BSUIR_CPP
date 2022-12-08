@@ -4,11 +4,11 @@
 #include <sstream>
 
 #include "passenger.h"
-std::string passenger::serialize ()
+std::string passenger::serialize_ui ()
 {
 	std::stringstream ss;
-	ss << "Passenger" << person::serialize();
-  return person::serialize ();
+	ss << "Passenger" << person::serialize_ui();
+  return person::serialize_ui();
 }
 UID passenger::get_card () const
 {

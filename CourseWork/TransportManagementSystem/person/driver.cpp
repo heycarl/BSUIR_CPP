@@ -8,7 +8,7 @@ std::string driver::serialize_license ()
 {
   std::stringstream ss;
   ss << "License for " << vehicle::serialize_vehicle_type (license_type) << std::endl
-	 << " valid until " << license_expiration.serialize ();
+	 << " valid until " << license_expiration.serialize_ui();
   return ss.str ();
 }
 driver::driver(const date& license_expiration, vehicle::vehicle_type license_type)

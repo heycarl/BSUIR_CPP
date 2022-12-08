@@ -17,7 +17,7 @@ public:
 	date(std::string);
 	date() = default;
 
-	std::string serialize() const;
+	std::string serialize_ui() const;
 
 	void set_date(uint8_t d, uint8_t m, uint8_t y);
 	void set_date(std::tm);

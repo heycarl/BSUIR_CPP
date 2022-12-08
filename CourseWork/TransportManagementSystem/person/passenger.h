@@ -18,7 +18,7 @@ public:
 private:
 	UID card;
 public:
-	std::string serialize() override;
+	std::string serialize_ui() override;
 	UID get_card() const;
 };
 

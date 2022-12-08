@@ -185,7 +185,7 @@ void user_admin::create_route()
 void user_admin::route_serialize_information()
 {
 	std::cout << core::rm.serialize_all_routes_path() << std::endl;
-	std::cout << "Select route to serialize: " << std::endl;
+	std::cout << "Select route to serialize_ui: " << std::endl;
 	int selected_route;
 	std::cin >> selected_route;
 	try {

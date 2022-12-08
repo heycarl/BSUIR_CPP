@@ -35,7 +35,7 @@ public:
 	vehicle(std::string registration_mark, vehicle::vehicle_type type, uint8_t capacity);
 	bool validate_card(travel_card);
 	virtual int get_travel_distance();
-	virtual std::string serialize();
+	virtual std::string serialize_ui();
 public:
 	static std::string serialize_vehicle_type(vehicle_type);
 	static vehicle_type parse_vehicle_type(std::string);

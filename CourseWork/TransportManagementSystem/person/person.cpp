@@ -4,14 +4,14 @@
 #include <sstream>
 
 #include "person.h"
-std::string person::serialize()
+std::string person::serialize_ui()
 {
 	std::stringstream ss;
 	ss << "[Driver-" << +uid << "]" << std::endl
 	   << "Name: " << first_name
 	   << " " << last_name << std::endl
 	   << "Date of birth: "
-	   << date_of_birth.serialize() << std::endl;
+	   << date_of_birth.serialize_ui() << std::endl;
 	return ss.str();
 }
 std::string person::get_first_last_name()

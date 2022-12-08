@@ -19,7 +19,7 @@ private:
 	date date_of_birth;
 public:
 	person();
-	virtual std::string serialize();
+	virtual std::string serialize_ui();
 	std::string get_first_last_name();
 	UID get_uid() const;
 };
