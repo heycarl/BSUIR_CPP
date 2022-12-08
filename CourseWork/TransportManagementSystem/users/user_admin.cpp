@@ -195,3 +195,5 @@ void user_admin::route_serialize_information()
 		throw e;
 	}
 }
+user_admin::user_admin(const std::string& login, const std::string& password)
+		:user(login, password) { }

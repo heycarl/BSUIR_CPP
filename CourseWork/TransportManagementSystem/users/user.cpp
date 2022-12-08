@@ -14,9 +14,9 @@ bool user::validate_credentials (std::string validating_login, std::string valid
 }
 user::user ()
 {
-  std::cout << "Enter username: ";
-  std::cin >> login;
-
-  std::cout << "Enter password: ";
-  std::cin >> password;
+//  std::cout << "Enter login for new user: ";
+//  std::cin >> login;
+//
+//  std::cout << "Enter password: ";
+//  std::cin >> password;
 }
