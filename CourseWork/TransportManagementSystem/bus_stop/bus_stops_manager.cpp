@@ -37,3 +37,21 @@ std::string bus_stops_manager::serialize_all_bus_stops_names()
 	ss << " ]" << std::endl;
 	return ss.str();
 }
+void bus_stops_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_bus_stops;
+	ofs.close();
+}
+void bus_stops_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_bus_stops;
+	ifs.close();
+}

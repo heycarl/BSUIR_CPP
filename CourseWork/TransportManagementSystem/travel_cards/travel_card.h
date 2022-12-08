@@ -8,7 +8,6 @@
 #include <iostream>
 #include <boost/serialization/serialization.hpp>
 
-//#include "uid_generator.h"
 #include "uid_generator.h"
 
 class travel_card {

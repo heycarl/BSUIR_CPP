@@ -10,7 +10,7 @@ uint8_t bus_stop::get_uid() const
 {
 	return uid;
 }
-void bus_stop::set_uid(uint8_t u)
+void bus_stop::set_uid(UID u)
 {
 	bus_stop::uid = u;
 }

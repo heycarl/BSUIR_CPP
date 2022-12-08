@@ -12,14 +12,17 @@ vehicles_manager core::vm = vehicles_manager();
 
 #define TCM_DB_FILE "travel_cards.dat"
 #define VM_DB_FILE "vehicles.dat"
+#define BSM_DB_FILE "stopes.dat"
 
 void core::load()
 {
 	tcm.load_db(TCM_DB_FILE);
 	vm.load_db(VM_DB_FILE);
+	bsm.load_db(BSM_DB_FILE);
 }
 void core::save()
 {
 	tcm.save_db(TCM_DB_FILE);
 	vm.save_db(VM_DB_FILE);
+	bsm.save_db(BSM_DB_FILE);
 }

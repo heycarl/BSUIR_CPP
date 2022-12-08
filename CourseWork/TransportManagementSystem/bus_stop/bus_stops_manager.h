@@ -11,8 +11,9 @@
 
 #include "bus_stop.h"
 #include "uid_generator.h"
+#include "manager.h"
 
-class bus_stops_manager {
+class bus_stops_manager : public manager{
 private:
 	std::list<bus_stop> l_bus_stops;
 public:
@@ -20,6 +21,8 @@ public:
 	bus_stop& add_bus_stop(std::string, double, double);
 	std::string serialize_all_bus_stops();
 	std::string serialize_all_bus_stops_names();
+	void save_db(const std::string &) override;
+	void load_db(const std::string &) override;
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_BUS_STOPS_MANAGER_H

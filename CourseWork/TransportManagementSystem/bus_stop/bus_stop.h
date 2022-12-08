@@ -9,20 +9,23 @@
 #include <list>
 #include <sstream>
 #include <map>
+#include <boost/serialization/serialization.hpp>
+
 
 #include "uid_generator.h"
 
 class bus_stop {
 private:
-	uint8_t uid;
+	UID uid;
 	std::string name;
 	double latitude;
 	double longitude;
 	std::string get_options_string();
 public:
+	bus_stop() = default;
 	bus_stop(const std::string& name, double latitude, double longitude);
 	UID get_uid() const;
-	void set_uid(uint8_t u);
+	void set_uid(UID u);
 	const std::string& get_name() const;
 	void set_name(const std::string& n);
 	std::string get_coords() const;
@@ -45,6 +48,12 @@ public:
 	std::string serialize_stop();
 private:
 	std::list<stop_options> options;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid & name & latitude & longitude & options;
+	}
 };
 
 #endif //STOP_H_
