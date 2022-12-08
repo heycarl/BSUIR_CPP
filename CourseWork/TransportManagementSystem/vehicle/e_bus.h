@@ -6,11 +6,13 @@
 #define TRANSPORTMANAGEMENTSYSTEM_E_BUS_H
 
 #include "vehicle.h"
+#include <boost/serialization/serialization.hpp>
 
 class e_bus : public vehicle {
 private:
 	double battery_consumption;
 public:
+	e_bus() = default;
 	e_bus(std::string registration_mark, uint8_t capacity,
 			double battery_consumption);
 	int get_travel_distance() override;

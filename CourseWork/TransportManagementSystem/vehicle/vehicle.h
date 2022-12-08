@@ -9,25 +9,31 @@
 #include <map>
 #include <sstream>
 
-
 #include "travel_card.h"
 #include "travel_cards_manager.h"
 #include "uid_generator.h"
 
 class vehicle {
 public:
-    enum vehicle_type {
-        bus,
-        e_bus,
-        tram
-    };
+	enum vehicle_type {
+		bus,
+		e_bus,
+		tram
+	};
 	static std::map<vehicle_type, std::string> vehicle_type_string;
 private:
-    UID uid;
-    std::string registration_mark;
-    vehicle_type type;
-    uint8_t capacity;
+	UID uid;
+	std::string registration_mark;
+	vehicle_type type;
+	uint8_t capacity;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid & registration_mark & type & capacity;
+	}
 public:
+	vehicle() = default;
 	UID get_uid() const;
 	const std::string& get_registration_mark() const;
 	vehicle_type get_type() const;

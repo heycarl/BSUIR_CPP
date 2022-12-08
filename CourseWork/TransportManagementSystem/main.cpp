@@ -6,7 +6,8 @@ int main()
 	core::load();
 	users_manager umanager = users_manager();
 	umanager.load_db("users.dat");
-	umanager.sign_in_admin();
+	auto& a = umanager.sign_in_admin();
+	a.view_vehicles();
 	umanager.save_db("users.dat");
 	core::save();
 //	u.create_bus_stop();

@@ -8,10 +8,11 @@
 #include "bus.h"
 #include "e_bus.h"
 #include "tram.h"
+#include "manager.h"
 
 #include <iostream>
 
-class vehicles_manager {
+class vehicles_manager : public manager{
 private:
 	std::list<bus> l_buses;
 	std::list<e_bus> l_e_buses;
@@ -30,6 +31,8 @@ public:
 	std::string serialize_all_trams();
 
 	bool check_if_vehicle_exists(UID);
+	void save_db(const std::string &) override;
+	void load_db(const std::string &) override;
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_VEHICLES_MANAGER_H

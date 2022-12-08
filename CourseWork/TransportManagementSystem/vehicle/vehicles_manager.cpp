@@ -101,3 +101,21 @@ bool vehicles_manager::check_if_vehicle_exists(UID uid_to_find)
 	}
 	return false;
 }
+void vehicles_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_buses & l_e_buses & l_trams;
+	ofs.close();
+}
+void vehicles_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_buses & l_e_buses & l_trams;
+	ifs.close();
+}
