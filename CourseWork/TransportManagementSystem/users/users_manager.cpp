@@ -8,8 +8,13 @@ user_passenger& users_manager::sign_up_passenger()
 {
 	std::string login;
 	std::string password;
-	ask_credentials("Enter new passenger's username and password:\n", login, password);
-	l_passengers.push_front(user_passenger());
+	user::ask_credentials("Enter new passenger's username and password:\n", login, password);
+	std::string first_name;
+	std::string last_name;
+	std::string dob;
+	person::ask_names_dob("Enter first, last name and dob in \"dd.mm.yy\" notation\n", first_name, last_name, dob);
+
+	l_passengers.push_front(user_passenger(first_name, last_name, dob, login, password));
 	return l_passengers.front();
 }
 
@@ -17,7 +22,7 @@ user_admin& users_manager::sign_up_admin()
 {
 	std::string login;
 	std::string password;
-	ask_credentials("Enter new admins's username and password:\n", login, password);
+	user::ask_credentials("Enter new admins's username and password:\n", login, password);
 	l_admins.push_front(user_admin(login, password));
 	return l_admins.front();
 }
@@ -25,7 +30,7 @@ user_passenger& users_manager::sign_in_passenger()
 {
 	std::string login;
 	std::string password;
-	ask_credentials("Enter passengers's username and password:\n", login, password);
+	user::ask_credentials("Enter passengers's username and password:\n", login, password);
 
 	for (auto& u_p : l_passengers) {
 		if (u_p.validate_credentials(login, password))
@@ -45,7 +50,7 @@ user_admin& users_manager::sign_in_admin()
 {
 	std::string login;
 	std::string password;
-	ask_credentials("Enter admin's username and password:\n", login, password);
+	user::ask_credentials("Enter admin's username and password:\n", login, password);
 
 	for (auto& u_a : l_admins) {
 		if (u_a.validate_credentials(login, password))
@@ -59,7 +64,7 @@ void users_manager::save_db(const std::string& db)
 	if (!ofs.is_open())
 		return;
 	boost::archive::text_oarchive oa(ofs);
-	oa & l_admins;
+	oa & l_admins & l_passengers;
 	ofs.close();
 }
 void users_manager::load_db(const std::string& db)
@@ -68,12 +73,6 @@ void users_manager::load_db(const std::string& db)
 	if (!ifs.is_open())
 		return;
 	boost::archive::text_iarchive ia(ifs);
-	ia & l_admins;
+	ia & l_admins & l_passengers;
 	ifs.close();
-}
-void users_manager::ask_credentials(std::string req, std::string& resp_1, std::string& resp_2)
-{
-	std::cout << req;
-	std::cin >> resp_1;
-	std::cin >> resp_2;
 }

@@ -14,7 +14,8 @@
 
 class passenger : public person {
 public:
-	passenger();
+	passenger() = default;
+	passenger(std::string f_name, std::string l_name, std::string dob);
 private:
 	UID card;
 public:

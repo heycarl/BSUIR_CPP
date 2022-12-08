@@ -12,11 +12,10 @@ bool user::validate_credentials (std::string validating_login, std::string valid
 	return true;
   return false;
 }
-user::user ()
+void user::ask_credentials(std::string req, std::string& resp_1, std::string& resp_2)
 {
-//  std::cout << "Enter login for new user: ";
-//  std::cin >> login;
-//
-//  std::cout << "Enter password: ";
-//  std::cin >> password;
+	std::cout << req;
+	std::cin >> resp_1;
+	std::cin >> resp_2;
 }
+

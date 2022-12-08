@@ -21,8 +21,9 @@ private:
 	}
 public:
 	user(std::string login, std::string password);
-	user();
+	user() = default;
 	bool validate_credentials(std::string, std::string);
+	static void ask_credentials(std::string, std::string&, std::string&);
 };
 
 #endif //_USER_H_

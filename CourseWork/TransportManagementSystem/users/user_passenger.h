@@ -10,15 +10,14 @@
 
 #include "core.h"
 
-class user_passenger : public user, public passenger{
-// private:
-//	passenger me;
- public:
-  using user::user;
-  void buy_trips();
-  void view_remaining_trips();
-  void enter_bus();
-  void get_arrival_time();
+class user_passenger : public user, public passenger {
+public:
+	user_passenger() = default;
+	user_passenger(std::string f_name, std::string l_name, std::string dob, std::string login, std::string password);
+	void buy_trips();
+	void view_remaining_trips();
+	void enter_bus();
+	void get_arrival_time();
 };
 
 #endif //_USER_PASSENGER_H_

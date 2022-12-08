@@ -18,10 +18,12 @@ private:
 	std::string last_name;
 	date date_of_birth;
 public:
-	person();
+	person(std::string fisrt_name, std::string last_name, std::string dob);
+	person() = default;
 	virtual std::string serialize_ui();
 	std::string get_first_last_name();
 	UID get_uid() const;
+	static void ask_names_dob(std::string req, std::string& f_name, std::string& last_name, std::string& dob);
 };
 
 #endif //_PERSON_H_

@@ -7,7 +7,7 @@
 std::string person::serialize_ui()
 {
 	std::stringstream ss;
-	ss << "[Driver-" << +uid << "]" << std::endl
+	ss << "[Person-" << +uid << "]" << std::endl
 	   << "Name: " << first_name
 	   << " " << last_name << std::endl
 	   << "Date of birth: "
@@ -21,20 +21,19 @@ std::string person::get_first_last_name()
 	   << last_name << std::endl;
 	return ss.str();
 }
-person::person()
-{
-	uid = uidGenerator::generate();
-	std::cout << "Enter fisrt name: ";
-	std::cin >> first_name;
-	std::cout << "Enter last name: ";
-	std::cin >> last_name;
-	std::cout << "Enter date of birth in \"dd.mm.yy\" notation: ";
-	std::string date_string;
-	std::cin >> date_string;
-	date_of_birth.set_date(date_string);
-
-}
 UID person::get_uid() const
 {
 	return uid;
 }
+person::person(std::string first_name, std::string last_name, std::string date_string)
+		:first_name(first_name), last_name(last_name),
+		 date_of_birth(date_string) {
+	uid = uidGenerator::generate();
+}
+void person::ask_names_dob(std::string req, std::string& f_name, std::string& last_name, std::string& dob)
+{
+	std::cout << req;
+	std::cin >> f_name;
+	std::cin >> last_name;
+	std::cin >> dob;
+};

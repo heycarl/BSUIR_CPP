@@ -9,11 +9,14 @@ void user_passenger::buy_trips()
 	std::cout << "How many trips you want to buy? ";
 	int req_trips;
 	std::cin >> req_trips;
-	c.set_remaining_trips(c.get_remaining_trips() + req_trips);
+	c.set_remaining_trips(c.get_remaining_trips()+req_trips);
 }
 void user_passenger::view_remaining_trips()
 {
 	travel_card& c = core::tcm.find_travel_card(get_card());
 	std::cout << "You have " << +c.get_remaining_trips() << " remaining trips for your "
-	<< +c.get_uid() << " travel card";
+			  << +c.get_uid() << " travel card";
 }
+user_passenger::user_passenger(std::string f_name, std::string l_name, std::string dob, std::string login,
+		std::string password)
+		:passenger(f_name, l_name, dob), user(login, password) { }
