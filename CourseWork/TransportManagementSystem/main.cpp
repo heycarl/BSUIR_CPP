@@ -1,19 +1,18 @@
 #include "users_manager.h"
+#include "core.h"
 
 int main()
 {
 
+	core::load();
 	users_manager umanager = users_manager();
-
-	auto u = umanager.sign_up_admin();
-	u.create_vehicle();
-	u.create_driver();
-	u.create_route();
-	u.route_serialize_information();
+	auto u = umanager.sign_up_passenger();
+	u.buy_trips();
+	core::save();
 //	u.create_bus_stop();
-//	u.view_bus_stops();
-//	u.modify_bus_stop();
-//	u.view_bus_stops();
+//	u.create_driver();
+//	u.create_vehicle();
+//	u.create_route();
 
 
 	return 0;

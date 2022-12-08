@@ -18,5 +18,7 @@ public:
 	static bus_stops_manager bsm;
 	static drivers_manager dm;
 	static vehicles_manager vm;
+	static void load();
+	static void save();
 };
 #endif //TRANSPORTMANAGEMENTSYSTEM_CORE_H

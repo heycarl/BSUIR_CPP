@@ -28,3 +28,8 @@ void travel_card::set_uid (UID u)
 {
   travel_card::uid = u;
 }
+travel_card::travel_card()
+{
+	uid = 0;
+	remaining_trips = 0;
+}

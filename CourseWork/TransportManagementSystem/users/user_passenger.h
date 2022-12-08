@@ -10,9 +10,9 @@
 
 #include "core.h"
 
-class user_passenger : public user{
- private:
-	passenger me;
+class user_passenger : public user, public passenger{
+// private:
+//	passenger me;
  public:
   using user::user;
   void buy_trips();

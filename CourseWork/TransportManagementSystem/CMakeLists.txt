@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.22)
 project(TransportManagementSystem)
 
 set(CMAKE_CXX_STANDARD 17)
+
+set(Boost_NO_BOOST_CMAKE ON)
 
 set(Sources
         main.cpp
@@ -49,7 +51,8 @@ set(Sources
         person/drivers_manager.cpp
         person/drivers_manager.h
         vehicle/vehicles_manager.cpp
-        vehicle/vehicles_manager.h)
+        vehicle/vehicles_manager.h
+        manager/manager.h)
 
 set(Directories
         route
@@ -60,7 +63,11 @@ set(Directories
         travel_cards
         uid_generator
         users
-        core)
+        core
+        manager)
+
+find_package(Boost 1.80.0 REQUIRED COMPONENTS serialization)
 
 add_executable(TransportManagementSystem main.cpp ${Sources})
-target_include_directories(TransportManagementSystem PRIVATE ${Directories})
+target_include_directories(TransportManagementSystem PRIVATE  ${Directories})
+target_link_libraries(TransportManagementSystem PRIVATE ${Boost_LIBRARIES})

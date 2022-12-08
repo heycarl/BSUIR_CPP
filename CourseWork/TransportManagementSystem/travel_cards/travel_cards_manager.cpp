@@ -2,7 +2,7 @@
 // Created by Alexandr on 11/6/2022.
 //
 
-#include <exception>
+#include <fstream>
 
 #include "travel_cards_manager.h"
 
@@ -34,4 +34,22 @@ void travel_cards_manager::create_if_not_exists (UID u)
 	{
 	  travel_cards.push_front (travel_card (u));
 	}
+}
+void travel_cards_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return ;
+	boost::archive::text_oarchive oa(ofs);
+	oa & travel_cards;
+	ofs.close();
+}
+void travel_cards_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & travel_cards;
+	ifs.close();
 }
