@@ -51,14 +51,13 @@ void bus_stop::set_coords(double lon, double lat)
 }
 bus_stop::bus_stop(const std::string& name, double latitude, double longitude)
 		:uid(uidGenerator::generate()), name(name), latitude(latitude), longitude(longitude) { }
-std::string bus_stop::serialize_stop()
+std::string bus_stop::serialize_ui()
 {
 	std::stringstream ss;
-	ss << "-- " << get_name() << " --" << std::endl
-	   << "UID: " << +get_uid() << std::endl
+	ss << "[Bus-stop-" << +get_uid() << "]" << std::endl
+	   << "Name: " << get_name() << std::endl
 	   << "Coordinates: " << get_coords() << std::endl
-	   << "Options: " << get_options_string() << std::endl
-	   << "--" << std::endl;
+	   << "Options: " << get_options_string() << std::endl;
 	return ss.str();
 }
 std::string bus_stop::get_options_string()

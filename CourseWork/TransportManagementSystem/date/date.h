@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <boost/serialization/serialization.hpp>
 
 class date {
 public:
@@ -24,6 +25,13 @@ public:
 	void set_date(std::string);
 
 	static bool date_parser(std::string&, std::tm);
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & year & month & day;
+	}
 };
 
 #endif //_DATE_H_

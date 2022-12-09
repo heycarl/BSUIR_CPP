@@ -6,6 +6,7 @@
 #define DRIVER_H_
 
 #include <iostream>
+#include <boost/serialization/base_object.hpp>
 
 #include "person.h"
 #include "date.h"
@@ -19,14 +20,15 @@ private:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version)
 	{
-		archive & *this;
+		archive & boost::serialization::base_object<person>(*this);
+		archive & license_expiration & license_type;
 	}
 public:
 	driver() = default;
 	driver(std::string fisrt_name, std::string last_name, std::string dob, vehicle::vehicle_type v_type, date lic_exp);
 	std::string serialize_ui() override
 	{
-		return person::serialize_ui() += "\n"+serialize_license();
+		return person::serialize_ui()+serialize_license();
 	};
 	std::string serialize_license();
 };

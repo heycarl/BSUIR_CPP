@@ -11,6 +11,14 @@
 #include "core.h"
 
 class user_passenger : public user, public passenger {
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & boost::serialization::base_object<user>(*this);
+		archive & boost::serialization::base_object<passenger>(*this);
+	}
 public:
 	user_passenger() = default;
 	user_passenger(std::string f_name, std::string l_name, std::string dob, std::string login, std::string password);

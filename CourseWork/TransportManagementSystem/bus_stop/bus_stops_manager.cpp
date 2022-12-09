@@ -20,10 +20,15 @@ bus_stop& bus_stops_manager::add_bus_stop(std::string stop_name, double lat, dou
 }
 std::string bus_stops_manager::serialize_all_bus_stops()
 {
-	std::stringstream ss;
-	for (auto& stop : l_bus_stops) {
-		ss << stop.serialize_stop();
+	if (l_bus_stops.empty()) {
+		return "empty stop list";
 	}
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& stop : l_bus_stops) {
+		ss << stop.serialize_ui();
+	}
+	ss << "--------------------------\n";
 	return ss.str();
 }
 std::string bus_stops_manager::serialize_all_bus_stops_names()

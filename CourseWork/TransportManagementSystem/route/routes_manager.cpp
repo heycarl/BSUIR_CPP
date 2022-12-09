@@ -27,3 +27,21 @@ std::string routes_manager::serialize_all_routes_path()
 	ss << "--------------------------\n";
 	return ss.str();
 }
+void routes_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_routes;
+	ofs.close();
+}
+void routes_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_routes;
+	ifs.close();
+}

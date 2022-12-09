@@ -45,7 +45,7 @@ public:
 	void set_options(std::list<stop_options> stop_options);
 	std::list<std::string> serialize_options();
 	std::string view_existing_options();
-	std::string serialize_stop();
+	std::string serialize_ui();
 private:
 	std::list<stop_options> options;
 	friend class boost::serialization::access;

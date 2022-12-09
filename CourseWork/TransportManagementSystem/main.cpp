@@ -7,8 +7,7 @@ int main()
 	users_manager umanager = users_manager();
 	umanager.load_db("users.dat");
 	auto& a = umanager.sign_in_admin();
-	a.create_driver();
-	a.create_driver();
+	a.route_serialize_information();
 	umanager.save_db("users.dat");
 	core::save();
 //	u.create_bus_stop();

@@ -7,9 +7,11 @@
 
 #include <iostream>
 #include <list>
+#include <boost/serialization/serialization.hpp>
 
 #include "bus_stop.h"
 #include "uid_generator.h"
+
 class route {
 private:
 	UID uid;
@@ -20,10 +22,20 @@ private:
 		UID bus_stop;
 		time_t arrival_time = 0;
 		bool need_to_stop = true;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version)
+		{
+			archive & bus_stop & arrival_time & need_to_stop;
+		}
 	};
 	struct route_info {
 		std::string src;
 		std::string dst;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version)
+		{
+			archive & src & dst;
+		}
 	} route_info;
 	std::list<stop> stop_list;
 public:
@@ -34,7 +46,14 @@ public:
 private:
 	UID route_driver;
 	UID vehicle;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid & route_info & stop_list & route_driver & vehicle;
+	}
 public:
+	route() = default;
 	route(UID vehicle, UID route_driver, std::string src, std::string dst);
 	std::string serialize_route();
 	std::string serialize_full_route();
