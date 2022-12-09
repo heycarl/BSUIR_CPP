@@ -31,6 +31,8 @@ public:
 		return person::serialize_ui()+serialize_license();
 	};
 	std::string serialize_license();
+	const date& get_license_expiration() const;
+	vehicle::vehicle_type get_license_type() const;
 };
 
 #endif //DRIVER_H_

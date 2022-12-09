@@ -178,6 +178,9 @@ void user_admin::create_route()
 	if (!core::dm.check_if_driver_exists(selected_driver))
 		throw std::runtime_error("No such driver");
 
+	if (core::dm.find_driver(selected_driver).get_license_type() != core::vm.get_vehicle_type(selected_vehicle))
+		throw std::runtime_error("Driver has no valid license for this route");
+
 	std::cout << "Enter source point" << std::endl;
 	std::string src;
 	std::cin >> src;

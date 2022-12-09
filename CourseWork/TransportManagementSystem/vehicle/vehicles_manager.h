@@ -31,6 +31,7 @@ public:
 	std::string serialize_all_trams();
 
 	bool check_if_vehicle_exists(UID);
+	vehicle::vehicle_type get_vehicle_type(UID);
 	void save_db(const std::string &) override;
 	void load_db(const std::string &) override;
 };

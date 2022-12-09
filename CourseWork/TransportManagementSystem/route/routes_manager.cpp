@@ -19,6 +19,9 @@ route& routes_manager::find_route(UID uid_to_find)
 }
 std::string routes_manager::serialize_all_routes_path()
 {
+	if (l_routes.empty()) {
+		return "empty route list";
+	}
 	std::stringstream ss;
 	ss << "--------------------------\n";
 	for (auto& route : l_routes) {

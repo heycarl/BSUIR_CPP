@@ -33,6 +33,9 @@ std::string bus_stops_manager::serialize_all_bus_stops()
 }
 std::string bus_stops_manager::serialize_all_bus_stops_names()
 {
+	if (l_bus_stops.empty()) {
+		return "empty stop list";
+	}
 	std::stringstream ss;
 	ss << "[ ";
 	for (auto& stop : l_bus_stops) {
