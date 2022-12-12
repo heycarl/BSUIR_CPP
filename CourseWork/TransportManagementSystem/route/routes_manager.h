@@ -17,6 +17,7 @@ private:
 public:
 	route& add_route(UID vehicle, UID driver, std::string src_point, std::string dst_point);
 	route& find_route(UID);
+	std::list<route> get_routes_with_stop(UID stop_id);
 	std::string serialize_all_routes_path();
 	void save_db(const std::string &) override;
 	void load_db(const std::string &) override;

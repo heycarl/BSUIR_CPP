@@ -48,3 +48,13 @@ void routes_manager::load_db(const std::string& db)
 	ia & l_routes;
 	ifs.close();
 }
+std::list<route> routes_manager::get_routes_with_stop(UID stop_id)
+{
+	time_t arrival_time;
+	std::list<route> routes_with_stop;
+	for (auto& route: l_routes) {
+		if (route.check_arrival_time(stop_id, arrival_time))
+			routes_with_stop.push_front(route);
+	}
+	return routes_with_stop;
+}

@@ -32,11 +32,6 @@ user_passenger& users_manager::sign_in_passenger()
 	std::string password;
 	user::ask_credentials("Enter passengers's username and password:\n", login, password);
 
-	for (auto& u_p : l_passengers) {
-		if (u_p.validate_credentials(login, password))
-			return u_p;
-	}
-
 	auto uu = std::find_if(l_passengers.begin(), l_passengers.end(), [&](user_passenger& p) {
 	  return p.validate_credentials(login, password);
 	});
@@ -52,10 +47,9 @@ user_admin& users_manager::sign_in_admin()
 	std::string password;
 	user::ask_credentials("Enter admin's username and password:\n", login, password);
 
-	for (auto& u_a : l_admins) {
-		if (u_a.validate_credentials(login, password))
-			return u_a;
-	}
+	auto uu = std::find_if(l_passengers.begin(), l_passengers.end(), [&](user_passenger& p) {
+	  return p.validate_credentials(login, password);
+	});
 	throw std::runtime_error("No such admin found");
 }
 void users_manager::save_db(const std::string& db)

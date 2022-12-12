@@ -69,3 +69,13 @@ route::route(UID vehicle, UID route_driver, std::string src, std::string dst)
 }), route_driver(route_driver), vehicle(vehicle)
 {
 }
+bool route::check_arrival_time(UID bus_stop_uid, time_t& arrival_time)
+{
+	for (stop& stop : stop_list) {
+		if (stop.bus_stop==bus_stop_uid) {
+			arrival_time = stop.arrival_time;
+			return true;
+		}
+	}
+	return false;
+}

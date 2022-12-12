@@ -59,6 +59,7 @@ public:
 	std::string serialize_full_route();
 	void delete_stop(uint8_t id);
 	void add_stop(UID u, time_t arrival_time, bool need_to_stop);
+	bool check_arrival_time(UID bus_stop_uid, time_t& arrival_time);
 
 //	std::string view_driver();
 };

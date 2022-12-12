@@ -26,5 +26,21 @@ void user_passenger::enter_bus()
 }
 void user_passenger::get_arrival_time()
 {
-	// todo
+	std::cout << "Enter bus stop id, where you are: ";
+	std::cout << core::bsm.serialize_all_bus_stops_names();
+	int stop_id;
+	std::cin >> stop_id;
+	auto routes_with_stop = core::rm.get_routes_with_stop(stop_id);
+	if (routes_with_stop.empty()) {
+		std::cout << "Stop is not used by routes" << std::endl;
+		return;
+	}
+
+	std::time_t arrival_time;
+	std::cout << "[Bus-stop-" << stop_id << "]" << std::endl;
+	for (auto& route: routes_with_stop) {
+		if (route.check_arrival_time(stop_id, arrival_time)){
+			std::cout << route.serialize_route() << " at " << arrival_time << std::endl;
+		}
+	}
 }
