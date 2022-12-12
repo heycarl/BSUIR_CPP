@@ -1,20 +1,16 @@
-#include "users_manager.h"
+#include "core/application.h"
 
 int main()
 {
-
-	core::load();
-	users_manager umanager = users_manager();
-	umanager.load_db("users.dat");
-	auto& a = umanager.sign_in_admin();
-	a.route_serialize_information();
-	umanager.save_db("users.dat");
-	core::save();
-//	u.create_bus_stop();
-//	u.create_driver();
-//	u.create_vehicle();
-//	u.create_route();
-
-
+	application app = application();
+	try {
+		app.run();
+	}
+	catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}
+	catch (...) {
+		std::cerr << "Unhandled error happend. Bye!" << std::endl;
+	}
 	return 0;
 }

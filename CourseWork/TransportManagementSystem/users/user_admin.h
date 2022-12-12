@@ -15,7 +15,7 @@ public:
 	user_admin(const std::string&, const std::string&);
 	void create_driver();
 	void view_drivers();
-	void modify_driver(); // todo
+	void modify_driver();
 	void create_vehicle();
 	void view_vehicles();
 	void create_bus_stop();

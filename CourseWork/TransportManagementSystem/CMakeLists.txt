@@ -54,7 +54,10 @@ set(Sources
         person/drivers_manager.h
         vehicle/vehicles_manager.cpp
         vehicle/vehicles_manager.h
-        manager/manager.h)
+        manager/manager.h
+        interface/console/renderer.h
+        interface/console/controller.h
+        core/application.h)
 
 set(Directories
         route
@@ -66,7 +69,8 @@ set(Directories
         uid_generator
         users
         core
-        manager)
+        manager
+        interface)
 
 find_package(Boost 1.80.0 REQUIRED COMPONENTS serialization)
 find_package(CryptoPP REQUIRED)

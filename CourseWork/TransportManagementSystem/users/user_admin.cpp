@@ -178,7 +178,7 @@ void user_admin::create_route()
 	if (!core::dm.check_if_driver_exists(selected_driver))
 		throw std::runtime_error("No such driver");
 
-	if (core::dm.find_driver(selected_driver).get_license_type() != core::vm.get_vehicle_type(selected_vehicle))
+	if (core::dm.find_driver(selected_driver).get_license_type()!=core::vm.get_vehicle_type(selected_vehicle))
 		throw std::runtime_error("Driver has no valid license for this route");
 
 	std::cout << "Enter source point" << std::endl;
@@ -199,9 +199,18 @@ void user_admin::route_serialize_information()
 	try {
 		auto& route = core::rm.find_route(selected_route);
 		std::cout << route.serialize_full_route() << std::endl;
-	} catch (std::runtime_error e) {
+	}
+	catch (std::runtime_error e) {
 		throw e;
 	}
 }
 user_admin::user_admin(const std::string& login, const std::string& password)
 		:user(login, password) { }
+void user_admin::modify_driver()
+{
+	// todo
+}
+void user_admin::route_serialize_stats()
+{
+	// todo
+}
