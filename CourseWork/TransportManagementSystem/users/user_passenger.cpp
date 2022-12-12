@@ -20,3 +20,11 @@ void user_passenger::view_remaining_trips()
 user_passenger::user_passenger(std::string f_name, std::string l_name, std::string dob, std::string login,
 		std::string password)
 		:passenger(f_name, l_name, dob), user(login, password) { }
+void user_passenger::enter_bus()
+{
+	// todo
+}
+void user_passenger::get_arrival_time()
+{
+	// todo
+}
