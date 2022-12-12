@@ -47,9 +47,12 @@ user_admin& users_manager::sign_in_admin()
 	std::string password;
 	user::ask_credentials("Enter admin's username and password:\n", login, password);
 
-	auto uu = std::find_if(l_passengers.begin(), l_passengers.end(), [&](user_passenger& p) {
+	auto uu = std::find_if(l_admins.begin(), l_admins.end(), [&](user_admin& p) {
 	  return p.validate_credentials(login, password);
 	});
+	if (uu != l_admins.end()) {
+		return *uu;
+	}
 	throw std::runtime_error("No such admin found");
 }
 void users_manager::save_db(const std::string& db)

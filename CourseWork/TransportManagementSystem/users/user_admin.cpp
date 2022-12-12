@@ -214,3 +214,31 @@ void user_admin::route_serialize_stats()
 {
 	// todo
 }
+void user_admin::add_stop_to_route()
+{
+	std::cout << core::rm.serialize_all_routes_path() << std::endl;
+	std::cout << "Select route to add stop: " << std::endl;
+	int selected_route;
+	std::cin >> selected_route;
+	try {
+		auto& route = core::rm.find_route(selected_route);
+		std::cout << core::bsm.serialize_all_bus_stops_names() << std::endl;
+		std::cout << "Select stop to add: " << std::endl;
+		int selected_stop;
+		std::cin >> selected_stop;
+		try {
+			core::bsm.find_bus_stop(selected_stop);
+			std::cout << "Enter bus arrival time: " << std::endl;
+			std::time_t arrival_time;
+			std::cin >> arrival_time;
+			route.add_stop(selected_stop, arrival_time, true);
+		}
+		catch (std::runtime_error e) {
+			throw e;
+		}
+
+	}
+	catch (std::runtime_error e) {
+		throw e;
+	}
+}

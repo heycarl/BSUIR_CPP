@@ -14,7 +14,7 @@ public:
 	{
 		renderer::render_boot_screen();
 		while (true) { // user login loop
-			renderer::render_message("You want to login as admin (1) or passenger (2)?");
+			renderer::render_message("You want to login as admin (1) or passenger (2) or exit (0)?");
 			int ch;
 			std::cin >> ch;
 			switch (ch) {
@@ -37,6 +37,9 @@ public:
 					renderer::render_error(e.what());
 				}
 				break;
+			}
+			case 0: {
+				return;
 			}
 			default: {
 				continue;
@@ -72,8 +75,9 @@ std::map<int, struct controller::func_admin> controller::admin_functions = {
 		{ 7, { "View bus stops", std::mem_fn(&user_admin::view_bus_stops) }},
 		{ 8, { "Modify bus stop", std::mem_fn(&user_admin::modify_bus_stop) }},
 		{ 9, { "Create route", std::mem_fn(&user_admin::create_route) }},
-		{ 10, { "Serialize route stats", std::mem_fn(&user_admin::route_serialize_stats) }},
-		{ 11, { "Serialize route information", std::mem_fn(&user_admin::route_serialize_information) }},
+		{ 10, { "Add stop to route", std::mem_fn(&user_admin::add_stop_to_route) }},
+		{ 11, { "Serialize route stats", std::mem_fn(&user_admin::route_serialize_stats) }},
+		{ 12, { "Serialize route information", std::mem_fn(&user_admin::route_serialize_information) }},
 };
 void controller::admin_ui(user_admin& a)
 {

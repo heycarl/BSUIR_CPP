@@ -17,13 +17,14 @@ std::string route::serialize_route()
 std::string route::serialize_full_route()
 {
 	std::stringstream ss;
-	ss << serialize_route();
+	ss << serialize_route() << std::endl
+	   << "Stop list: " << std::endl;
 	for (auto o : stop_list) {
 		auto& bus_stop = core::bsm.find_bus_stop(o.bus_stop);
-		ss << bus_stop.get_uid()
-		   << bus_stop.get_name() << " | "
-		   << o.arrival_time << " | "
-		   << (!(o.need_to_stop) ? "Bypassed |\n" : "");
+		ss << "Stop-[" << +bus_stop.get_uid() << "] \""
+		   << bus_stop.get_name() << "\" at "
+		   << o.arrival_time
+		   << (!(o.need_to_stop) ? " (Bypassed) " : "") << std::endl;
 	}
 	return ss.str();
 }

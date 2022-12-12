@@ -6,7 +6,7 @@
 
 #include <utility>
 
-uint8_t bus_stop::get_uid() const
+UID bus_stop::get_uid() const
 {
 	return uid;
 }
