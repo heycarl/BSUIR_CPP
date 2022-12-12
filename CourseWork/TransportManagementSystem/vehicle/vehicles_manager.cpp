@@ -101,7 +101,7 @@ bool vehicles_manager::check_if_vehicle_exists(UID uid_to_find)
 	}
 	return false;
 }
-vehicle::vehicle_type vehicles_manager::get_vehicle_type(UID)
+vehicle::vehicle_type vehicles_manager::get_vehicle_type(UID uid_to_find)
 {
 	for (auto& bus : l_buses) {
 		if (bus.get_uid()==uid_to_find)
@@ -115,7 +115,7 @@ vehicle::vehicle_type vehicles_manager::get_vehicle_type(UID)
 		if (tram.get_uid()==uid_to_find)
 			return vehicle::tram;
 	}
-	return false;
+	throw std::runtime_error("no such vehicle type");
 }
 
 void vehicles_manager::save_db(const std::string& db)

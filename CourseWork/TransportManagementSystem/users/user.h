@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <boost/serialization/serialization.hpp>
+#include <cryptopp/base64.h>
+#include <cryptopp/sha.h>
 
 class user {
 private:
@@ -19,6 +21,7 @@ private:
 	{
 		archive & login & password;
 	}
+	std::string get_hash(std::string source_str);
 public:
 	user(std::string login, std::string password);
 	user() = default;

@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(Boost_NO_BOOST_CMAKE ON)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
 set(Sources
         main.cpp
         vehicle/vehicle.cpp
@@ -67,7 +69,8 @@ set(Directories
         manager)
 
 find_package(Boost 1.80.0 REQUIRED COMPONENTS serialization)
+find_package(CryptoPP REQUIRED)
 
 add_executable(TransportManagementSystem main.cpp ${Sources})
-target_include_directories(TransportManagementSystem PRIVATE  ${Directories})
-target_link_libraries(TransportManagementSystem PRIVATE ${Boost_LIBRARIES})
+target_include_directories(TransportManagementSystem PRIVATE ${Directories})
+target_link_libraries(TransportManagementSystem PRIVATE ${Boost_LIBRARIES} ${CryptoPP_LIBRARY})
