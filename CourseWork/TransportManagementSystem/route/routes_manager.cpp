@@ -5,7 +5,7 @@
 #include "routes_manager.h"
 route& routes_manager::add_route(UID vehicle, UID driver, std::string src_point, std::string dst_point)
 {
-	auto new_route = route(0, 0, src_point, dst_point);
+	auto new_route = route(vehicle,driver, src_point, dst_point);
 	l_routes.push_front(new_route);
 	return l_routes.front();
 }
@@ -57,4 +57,12 @@ std::list<route> routes_manager::get_routes_with_stop(UID stop_id)
 			routes_with_stop.push_front(route);
 	}
 	return routes_with_stop;
+}
+std::string routes_manager::serialize_all_routes_stats()
+{
+	std::stringstream ss;
+	for (auto& route: l_routes) {
+		ss << route.serialize_stats() << std::endl;
+	}
+	return ss.str();
 }

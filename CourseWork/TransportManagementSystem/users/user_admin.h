@@ -23,7 +23,7 @@ public:
 	void modify_bus_stop();
 	void create_route();
 	void add_stop_to_route();
-	void route_serialize_stats();
+	void serialize_routes_stats();
 	void route_serialize_information();
 };
 

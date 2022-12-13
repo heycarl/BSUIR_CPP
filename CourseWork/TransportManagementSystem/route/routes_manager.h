@@ -19,6 +19,7 @@ public:
 	route& find_route(UID);
 	std::list<route> get_routes_with_stop(UID stop_id);
 	std::string serialize_all_routes_path();
+	std::string serialize_all_routes_stats();
 	void save_db(const std::string &) override;
 	void load_db(const std::string &) override;
 };

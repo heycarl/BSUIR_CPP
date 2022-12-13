@@ -193,7 +193,7 @@ void user_admin::create_route()
 void user_admin::route_serialize_information()
 {
 	std::cout << core::rm.serialize_all_routes_path() << std::endl;
-	std::cout << "Select route to serialize_ui: " << std::endl;
+	std::cout << "Select route to serialize: " << std::endl;
 	int selected_route;
 	std::cin >> selected_route;
 	try {
@@ -210,9 +210,14 @@ void user_admin::modify_driver()
 {
 	// todo
 }
-void user_admin::route_serialize_stats()
+void user_admin::serialize_routes_stats()
 {
-	// todo
+//	std::cout << core::rm.serialize_all_routes_path() << std::endl;
+//	std::cout << "Select route to add stop: " << std::endl;
+//	int selected_route;
+//	std::cin >> selected_route;
+//	auto& route = core::rm.find_route(selected_route);
+	std::cout << core::rm.serialize_all_routes_stats();
 }
 void user_admin::add_stop_to_route()
 {

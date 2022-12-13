@@ -13,7 +13,7 @@ std::map<vehicle::vehicle_type, std::string> vehicle::vehicle_type_string = {
 		{ tram, "Tram" }
 };
 
-bool vehicle::validate_card(travel_card card)
+bool vehicle::validate_card(travel_card& card)
 {
 	return travel_cards_manager::validator(card);
 }

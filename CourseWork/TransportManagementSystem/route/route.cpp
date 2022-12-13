@@ -18,10 +18,11 @@ std::string route::serialize_full_route()
 {
 	std::stringstream ss;
 	ss << serialize_route() << std::endl
+	   << "Vehicle UID: " << +vehicle << "\n"
 	   << "Stop list: " << std::endl;
 	for (auto o : stop_list) {
 		auto& bus_stop = core::bsm.find_bus_stop(o.bus_stop);
-		ss << "Stop-[" << +bus_stop.get_uid() << "] \""
+		ss << "[Stop-" << +bus_stop.get_uid() << "] \""
 		   << bus_stop.get_name() << "\" at "
 		   << o.arrival_time
 		   << (!(o.need_to_stop) ? " (Bypassed) " : "") << std::endl;
@@ -79,4 +80,14 @@ bool route::check_arrival_time(UID bus_stop_uid, time_t& arrival_time)
 		}
 	}
 	return false;
+}
+std::string route::serialize_stats()
+{
+	std::stringstream ss;
+	ss << serialize_route() << " Used by " << +popularity << " people";
+	return ss.str();
+}
+void route::increment_popularity()
+{
+	popularity++;
 }

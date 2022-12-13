@@ -39,7 +39,7 @@ public:
 	vehicle_type get_type() const;
 	uint8_t get_capacity() const;
 	vehicle(std::string registration_mark, vehicle::vehicle_type type, uint8_t capacity);
-	bool validate_card(travel_card);
+	bool validate_card(travel_card&);
 	virtual int get_travel_distance();
 	virtual std::string serialize_ui();
 public:

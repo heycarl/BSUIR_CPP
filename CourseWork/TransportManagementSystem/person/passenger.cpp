@@ -10,8 +10,10 @@ std::string passenger::serialize_ui()
 	ss << "Passenger" << person::serialize_ui();
 	return person::serialize_ui();
 }
-UID passenger::get_card() const
+UID passenger::get_card()
 {
+	core::tcm.create_if_not_exists(get_uid());
+	card = get_uid();
 	return card;
 }
 passenger::passenger(std::string f_name, std::string l_name, std::string dob)
@@ -20,9 +22,3 @@ passenger::passenger(std::string f_name, std::string l_name, std::string dob)
 	core::tcm.create_if_not_exists(get_uid());
 	card = get_uid();
 }
-//user_admin::user_admin(const std::string& login, const std::string& password)
-//		:user(login, password) { }
-//passenger::passenger() {
-//	core::tcm.create_if_not_exists(get_uid());
-//	card = get_uid();
-//}

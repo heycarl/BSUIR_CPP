@@ -136,3 +136,19 @@ void vehicles_manager::load_db(const std::string& db)
 	ia & l_buses & l_e_buses & l_trams;
 	ifs.close();
 }
+vehicle& vehicles_manager::get_vehicle_by_id(UID uid_to_find)
+{
+	for (auto& bus : l_buses) {
+		if (bus.get_uid()==uid_to_find)
+			return (vehicle&)bus;
+	}
+	for (auto& e_bus : l_e_buses) {
+		if (e_bus.get_uid()==uid_to_find)
+			return (vehicle&)e_bus;
+	}
+	for (auto& tram : l_trams) {
+		if (tram.get_uid()==uid_to_find)
+			return (vehicle&)tram;
+	}
+	throw std::runtime_error("no such vehicle");
+}

@@ -42,7 +42,6 @@ public:
 				return;
 			}
 			default: {
-				continue;
 			}
 			}
 		}
@@ -76,7 +75,7 @@ std::map<int, struct controller::func_admin> controller::admin_functions = {
 		{ 8, { "Modify bus stop", std::mem_fn(&user_admin::modify_bus_stop) }},
 		{ 9, { "Create route", std::mem_fn(&user_admin::create_route) }},
 		{ 10, { "Add stop to route", std::mem_fn(&user_admin::add_stop_to_route) }},
-		{ 11, { "Serialize route stats", std::mem_fn(&user_admin::route_serialize_stats) }},
+		{ 11, { "Serialize routes stats", std::mem_fn(&user_admin::serialize_routes_stats) }},
 		{ 12, { "Serialize route information", std::mem_fn(&user_admin::route_serialize_information) }},
 };
 void controller::admin_ui(user_admin& a)
@@ -97,7 +96,6 @@ void controller::admin_ui(user_admin& a)
 			catch (std::exception& e) {
 				renderer::render_error(e.what());
 			}
-
 		}
 		else if (ch==0) {
 			break;

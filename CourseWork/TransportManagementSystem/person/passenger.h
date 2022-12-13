@@ -20,7 +20,7 @@ private:
 	UID card;
 public:
 	std::string serialize_ui() override;
-	UID get_card() const;
+	UID get_card();
 };
 
 #endif //_PASSENGER_H_

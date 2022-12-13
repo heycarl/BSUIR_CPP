@@ -46,17 +46,20 @@ public:
 private:
 	UID route_driver;
 	UID vehicle;
+	uint16_t popularity = 0;
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version)
 	{
-		archive & uid & route_info & stop_list & route_driver & vehicle;
+		archive & uid & route_info & stop_list & route_driver & vehicle & popularity;
 	}
 public:
 	route() = default;
 	route(UID vehicle, UID route_driver, std::string src, std::string dst);
 	std::string serialize_route();
 	std::string serialize_full_route();
+	std::string serialize_stats();
+	void increment_popularity();
 	void delete_stop(uint8_t id);
 	void add_stop(UID u, time_t arrival_time, bool need_to_stop);
 	bool check_arrival_time(UID bus_stop_uid, time_t& arrival_time);

@@ -34,6 +34,7 @@ public:
 	vehicle::vehicle_type get_vehicle_type(UID);
 	void save_db(const std::string &) override;
 	void load_db(const std::string &) override;
+	vehicle& get_vehicle_by_id(UID);
 };
 
 #endif //TRANSPORTMANAGEMENTSYSTEM_VEHICLES_MANAGER_H
