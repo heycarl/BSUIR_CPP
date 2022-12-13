@@ -6,7 +6,7 @@
 
 #include "travel_cards_manager.h"
 
-bool travel_cards_manager::validator(travel_card c)
+bool travel_cards_manager::validator(travel_card& c)
 {
 	if (c.get_remaining_trips()>0) {
 		c.decrement_trips();

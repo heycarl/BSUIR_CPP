@@ -17,7 +17,7 @@ private:
 public:
 	void create_if_not_exists(UID);
 	travel_card& find_travel_card(UID);
-	static bool validator(travel_card);
+	static bool validator(travel_card&);
 	void load_db(const std::string&) override;
 	void save_db(const std::string&) override;
 };
