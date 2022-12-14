@@ -9,7 +9,7 @@
 
 typedef uint8_t UID;
 
-class uidGenerator {
+class uid_generator {
  public:
   static UID generate();
 };

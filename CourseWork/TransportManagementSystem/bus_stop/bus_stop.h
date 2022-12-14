@@ -41,9 +41,7 @@ public:
 			{stop_options::rain_cover, "Rain cover"},
 			{stop_options::usb_charger, "USB Charger"}
 	};
-	std::list<stop_options> get_options() const;
 	void set_options(std::list<stop_options> stop_options);
-	std::list<std::string> serialize_options();
 	std::string view_existing_options();
 	std::string serialize_ui();
 private:

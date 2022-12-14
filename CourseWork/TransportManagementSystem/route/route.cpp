@@ -66,7 +66,7 @@ UID route::get_uid() const
 	return uid;
 }
 route::route(UID vehicle, UID route_driver, std::string src, std::string dst)
-		:uid(uidGenerator::generate()), route_info({
+		:uid(uid_generator::generate()), route_info({
 		src, dst
 }), route_driver(route_driver), vehicle(vehicle)
 {

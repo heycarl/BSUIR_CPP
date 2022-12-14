@@ -28,7 +28,7 @@ UID person::get_uid() const
 person::person(std::string first_name, std::string last_name, std::string date_string)
 		:first_name(first_name), last_name(last_name),
 		 date_of_birth(date_string) {
-	uid = uidGenerator::generate();
+	uid = uid_generator::generate();
 }
 void person::ask_names_dob(std::string req, std::string& f_name, std::string& last_name, std::string& dob)
 {

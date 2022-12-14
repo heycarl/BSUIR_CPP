@@ -22,21 +22,9 @@ void bus_stop::set_name(const std::string& n)
 {
 	bus_stop::name = n;
 }
-std::list<bus_stop::stop_options> bus_stop::get_options() const
-{
-	return options;
-}
 void bus_stop::set_options(std::list<stop_options> stop_options)
 {
 	bus_stop::options = std::move(stop_options);
-}
-std::list<std::string> bus_stop::serialize_options()
-{
-	std::list<std::string> out;
-	for (auto o : bus_stop::options) {
-		out.push_front(options_and_names[o]);
-	}
-	return out;
 }
 std::string bus_stop::get_coords() const
 {
@@ -50,7 +38,7 @@ void bus_stop::set_coords(double lon, double lat)
 	latitude = lat;
 }
 bus_stop::bus_stop(const std::string& name, double latitude, double longitude)
-		:uid(uidGenerator::generate()), name(name), latitude(latitude), longitude(longitude) { }
+		:uid(uid_generator::generate()), name(name), latitude(latitude), longitude(longitude) { }
 std::string bus_stop::serialize_ui()
 {
 	std::stringstream ss;

@@ -3,7 +3,7 @@
 //
 
 #include "uid_generator.h"
-UID uidGenerator::generate ()
+UID uid_generator::generate ()
 {
   std::random_device rd;
   std::mt19937 mt (rd ());

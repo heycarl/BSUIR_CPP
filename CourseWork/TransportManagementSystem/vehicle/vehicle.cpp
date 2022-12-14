@@ -19,7 +19,7 @@ bool vehicle::validate_card(travel_card& card)
 }
 
 vehicle::vehicle(std::string registration_mark, vehicle::vehicle_type type, uint8_t capacity)
-		:uid(uidGenerator::generate()), registration_mark(std::move(registration_mark)), type(type),
+		:uid(uid_generator::generate()), registration_mark(std::move(registration_mark)), type(type),
 		 capacity(capacity) { }
 
 int vehicle::get_travel_distance()
