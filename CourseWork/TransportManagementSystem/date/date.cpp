@@ -6,7 +6,7 @@
 
 #include "date.h"
 
-void date::set_date(uint8_t y, uint8_t m, uint8_t d)
+void date::set_date(uint16_t y, uint8_t m, uint8_t d)
 {
 	year = y;
 	month = m;
@@ -15,20 +15,24 @@ void date::set_date(uint8_t y, uint8_t m, uint8_t d)
 std::string date::serialize_ui() const
 {
 	std::stringstream ss;
-	ss << +day << "." << +month << "." << +year;
+	ss << +year << "." << +month << "." << +day;
 	return ss.str();
 }
-date::date(uint8_t year, uint8_t month, uint8_t day)
+date::date(uint16_t year, uint8_t month, uint8_t day)
 		:year(year), month(month), day(day) { }
 
-bool date::date_parser(std::string& s, std::tm date)
+bool date::date_parser(std::string& s, tm& date)
 {
-	std::tm t;
-	std::stringstream ss;
-	ss << s;
-	ss >> std::get_time(&t, "%d.%b.%Y");
-	if (ss.fail())
+	try {
+		boost::gregorian::date d(boost::gregorian::from_simple_string(s));
+		date.tm_mday = d.day();
+		date.tm_mon = d.month();
+		date.tm_year = d.year();
+	}
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
 		return false;
+	}
 	return true;
 }
 date::date(std::string s)

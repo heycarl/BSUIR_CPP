@@ -20,7 +20,7 @@ private:
 	template<class Archive>
 	void serialize(Archive& archive, const unsigned int version)
 	{
-		archive & first_name & last_name & date_of_birth;
+		archive & uid & first_name & last_name & date_of_birth ;
 	}
 public:
 	person(std::string fisrt_name, std::string last_name, std::string dob);

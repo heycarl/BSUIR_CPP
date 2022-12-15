@@ -14,7 +14,12 @@ public:
 	{
 		renderer::render_boot_screen();
 		while (true) { // user login loop
-			renderer::render_message("You want to login as admin (1) or passenger (2) or exit (0)?");
+			renderer::render_message("You want to \n"
+									 "login as admin (1)\n"
+									 "login as passenger (2)\n"
+									 "sign up admin (3)\n"
+									 "sign up passenger (4)\n"
+									 "exit (0)?");
 			int ch;
 			std::cin >> ch;
 			switch (ch) {
@@ -31,6 +36,26 @@ public:
 			case 2: {
 				try {
 					user_passenger& passenger = umanager.sign_in_passenger();
+					passenger_ui(passenger);
+				}
+				catch (std::runtime_error& e) {
+					renderer::render_error(e.what());
+				}
+				break;
+			}
+			case 3: {
+				try {
+					user_admin& admin = umanager.sign_up_admin();
+					admin_ui(admin);
+				}
+				catch (std::runtime_error& e) {
+					renderer::render_error(e.what());
+				}
+				break;
+			}
+			case 4: {
+				try {
+					user_passenger& passenger = umanager.sign_up_passenger();
 					passenger_ui(passenger);
 				}
 				catch (std::runtime_error& e) {

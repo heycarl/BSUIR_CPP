@@ -74,20 +74,20 @@ void user_admin::create_driver()
 	std::string first_name;
 	std::string last_name;
 	std::string dob;
-	person::ask_names_dob("Enter first, last name and dob in \"dd.mm.yy\" notation\n", first_name, last_name, dob);
+	person::ask_names_dob("Enter first, last name and dob in \"yyyy-mm-dd\" notation\n", first_name, last_name, dob);
 
 	std::string vehicle_type;
 	std::cout << "Enter license vehicle type ( " << vehicle::view_existing_types() << " ): ";
 	std::cin >> vehicle_type;
 
 	std::string exp_date;
-	std::cout << "Enter license expiration date in \"dd.mm.yy\" notation: ";
+	std::cout << "Enter license expiration date in \"yyyy-mm-dd\" notation: ";
 	std::cin >> exp_date;
 	core::dm.add_driver(first_name, last_name, dob, vehicle_type, exp_date);
 }
 void user_admin::view_drivers()
 {
-	std::cout << core::dm.serialize_all_drivers();
+	std::cout << core::dm.serialize_all_drivers() << std::endl;
 }
 void user_admin::create_vehicle()
 {

