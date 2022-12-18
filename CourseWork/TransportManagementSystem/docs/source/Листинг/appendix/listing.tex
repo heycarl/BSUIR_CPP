@@ -1,0 +1,2173 @@
+\small
+\newpage
+\begin{verbatim}
+#include <iostream>
+#include <list>
+#include <sstream>
+#include <map>
+#include <boost/serialization/serialization.hpp>
+#include "uid_generator.h"
+class bus_stop {
+private:
+	UID uid;
+	std::string name;
+	double latitude;
+	double longitude;
+	std::string get_options_string();
+public:
+	bus_stop() = default;
+	bus_stop(const std::string& name, double latitude, 
+ double longitude);
+	UID get_uid() const;
+	void set_uid(UID u);
+	const std::string& get_name() const;
+	void set_name(const std::string& n);
+	std::string get_coords() const;
+	void set_coords(double, double);
+public:
+	enum stop_options {
+		rain_cover,
+		usb_charger,
+		coffee_machine
+	};
+	std::map<stop_options, std::string> options_and_names = {
+			{stop_options::coffee_machine, "Coffe Machine"},
+			{stop_options::rain_cover, "Rain cover"},
+			{stop_options::usb_charger, "USB Charger"}
+	};
+	void set_options(std::list<stop_options> stop_options);
+	std::string view_existing_options();
+	std::string serialize_ui();
+private:
+	std::list<stop_options> options;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid & name & latitude & longitude & options;
+	}
+};
+
+#include "bus_stop.h"
+#include <utility>
+UID bus_stop::get_uid() const
+{
+	return uid;
+}
+void bus_stop::set_uid(UID u)
+{
+	bus_stop::uid = u;
+}
+const std::string& bus_stop::get_name() const
+{
+	return name;
+}
+void bus_stop::set_name(const std::string& n)
+{
+	bus_stop::name = n;
+}
+void bus_stop::set_options(std::list<stop_options> stop_options)
+{
+	bus_stop::options = std::move(stop_options);
+}
+std::string bus_stop::get_coords() const
+{
+	std::stringstream ss;
+	ss << "Coordinates: " << longitude << " " << latitude;
+	return ss.str();
+}
+void bus_stop::set_coords(double lon, double lat)
+{
+	longitude = lon;
+	latitude = lat;
+}
+bus_stop::bus_stop(const std::string& name, double latitude,
+double longitude)
+		:uid(uid_generator::generate()), name(name), 
+  latitude(latitude), longitude(longitude) { }
+std::string bus_stop::serialize_ui()
+{
+	std::stringstream ss;
+	ss << "[Bus-stop-" << +get_uid() << "]" << std::endl
+	   << "Name: " << get_name() << std::endl
+	   << "Coordinates: " << get_coords() << std::endl
+	   << "Options: " << get_options_string() << std::endl;
+	return ss.str();
+}
+std::string bus_stop::get_options_string()
+{
+	if (options.empty())
+		return "";
+	std::stringstream ss;
+	for (auto& option : options) {
+		ss << options_and_names[option] << (option==
+  options.back() ? "" : ", ");
+	}
+	return ss.str();
+}
+std::string bus_stop::view_existing_options()
+{
+	std::stringstream ss;
+	for (auto o : options_and_names) {
+		ss << "[" << o.first << "] " << o.second 
+  << std::endl;
+	}
+	return ss.str();
+}
+
+#include <iostream>
+#include <list>
+#include <sstream>
+#include "bus_stop.h"
+#include "uid_generator.h"
+#include "manager.h"
+class bus_stops_manager : public manager{
+private:
+	std::list<bus_stop> l_bus_stops;
+public:
+	bus_stop& find_bus_stop(UID);
+	bus_stop& add_bus_stop(std::string, double, 
+ double);
+	std::string serialize_all_bus_stops();
+	std::string serialize_all_bus_stops_names();
+	void save_db(const std::string &) override;
+	void load_db(const std::string &) override;
+};
+
+#include "bus_stops_manager.h"
+bus_stop& bus_stops_manager::find_bus_stop
+(UID uid_to_find)
+{
+	for (auto& s : l_bus_stops) {
+		if (s.get_uid()==uid_to_find)
+			return s;
+	}
+	throw std::runtime_error("No such bus stop");
+}
+bus_stop& bus_stops_manager::add_bus_stop
+(std::string stop_name, double lat, double lon)
+{
+	auto new_stop = bus_stop(stop_name, lat, lon);
+	l_bus_stops.push_front(new_stop);
+	return l_bus_stops.front();
+}
+std::string bus_stops_manager::serialize_all_bus_stops()
+{
+	if (l_bus_stops.empty()) {
+		return "empty stop list";
+	}
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& stop : l_bus_stops) {
+		ss << stop.serialize_ui();
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}
+std::string bus_stops_manager::
+serialize_all_bus_stops_names()
+{
+	if (l_bus_stops.empty()) {
+		return "empty stop list";
+	}
+	std::stringstream ss;
+	ss << "[ ";
+	for (auto& stop : l_bus_stops) {
+		ss << +stop.get_uid() << " "
+		   << stop.get_name() << " | ";
+	}
+	ss << " ]" << std::endl;
+	return ss.str();
+}
+void bus_stops_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_bus_stops;
+	ofs.close();
+}
+void bus_stops_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_bus_stops;
+	ifs.close();
+}
+
+#include "users_manager.h"
+#include "console/controller.h"
+class application {
+public:
+	void run();
+	void quit();
+	~application();
+	users_manager umanager;
+};
+void application::run()
+{
+	core::load();
+	umanager = users_manager();
+	controller ctrl = controller(umanager);
+	umanager.load_db("users.dat");
+	ctrl.run();
+}
+void application::quit()
+{
+	umanager.save_db("users.dat");
+	core::save();
+	std::cout << "Bye!" << std::endl;
+}
+application::~application()
+{
+	quit();
+}
+
+#include "core.h"
+travel_cards_manager core::tcm = 
+travel_cards_manager();
+routes_manager core::rm = routes_manager();
+bus_stops_manager core::bsm = bus_stops_manager();
+drivers_manager core::dm = drivers_manager();
+vehicles_manager core::vm = vehicles_manager();
+#define TCM_DB_FILE "travel_cards.dat"
+#define VM_DB_FILE "vehicles.dat"
+#define BSM_DB_FILE "stopes.dat"
+#define DM_DB_FILE "drivers.dat"
+#define RM_DB_FILE "routes.dat"
+void core::load()
+{
+	tcm.load_db(TCM_DB_FILE);
+	vm.load_db(VM_DB_FILE);
+	bsm.load_db(BSM_DB_FILE);
+	dm.load_db(DM_DB_FILE);
+	rm.load_db(RM_DB_FILE);
+}
+void core::save()
+{
+	tcm.save_db(TCM_DB_FILE);
+	vm.save_db(VM_DB_FILE);
+	bsm.save_db(BSM_DB_FILE);
+	dm.save_db(DM_DB_FILE);
+	rm.save_db(RM_DB_FILE);
+}
+
+#include "travel_cards_manager.h"
+#include "routes_manager.h"
+#include "bus_stops_manager.h"
+#include "drivers_manager.h"
+#include "vehicles_manager.h"
+class core {
+public:
+	static travel_cards_manager tcm;
+	static routes_manager rm;
+	static bus_stops_manager bsm;
+	static drivers_manager dm;
+	static vehicles_manager vm;
+	static void load();
+	static void save();
+};
+
+#include <sstream>
+#include <iomanip>
+#include "date.h"
+void date::set_date(uint16_t y, uint8_t m, 
+uint8_t d)
+{
+	year = y;
+	month = m;
+	day = d;
+}
+std::string date::serialize_ui() const
+{
+	std::stringstream ss;
+	ss << +year << "." << +month << "." << +day;
+	return ss.str();
+}
+date::date(uint16_t year, uint8_t month, 
+uint8_t day)
+		:year(year), month(month), day(day) { }
+bool date::date_parser(std::string& s, tm& date)
+{
+	try {
+		boost::gregorian::date d(boost::gregorian
+  ::from_simple_string(s));
+		date.tm_mday = d.day();
+		date.tm_mon = d.month();
+		date.tm_year = d.year();
+	}
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return false;
+	}
+	return true;
+}
+date::date(std::string s)
+{
+	set_date(s);
+}
+void date::set_date(std::tm t)
+{
+	day = t.tm_mday;
+	month = t.tm_mon;
+	year = t.tm_year;
+}
+void date::set_date(std::string s)
+{
+	std::tm t;
+	if (date_parser(s, t))
+		set_date(t);
+}
+
+#include <iostream>
+#include <ctime>
+#include <boost/serialization/serialization.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+class date {
+public:
+	uint16_t year = 0;
+	uint8_t month = 0;
+	uint8_t day = 0;
+	date(uint16_t year, uint8_t month, uint8_t day);
+	date(std::string);
+	date() = default;
+	std::string serialize_ui() const;
+	void set_date(uint16_t y, uint8_t m, uint8_t d);
+	void set_date(std::tm);
+	void set_date(std::string);
+	static bool date_parser(std::string& s, tm& date);
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const 
+ unsigned int version)
+	{
+		archive & year & month & day;
+	}
+};
+
+#include "renderer.h"
+class controller {
+public:
+	explicit controller(users_manager& u);
+	void run()
+	{
+		renderer::render_boot_screen();
+		while (true) { // user login loop
+			renderer::render_message("You want to \n"
+									 "login as admin (1)\n"
+									 "login as passenger (2)\n"
+									 "sign up admin (3)\n"
+									 "sign up passenger (4)\n"
+									 "exit (0)?");
+			int ch;
+			std::cin >> ch;
+			switch (ch) {
+			case 1: {
+				try {
+					user_admin& admin = umanager.sign_in_admin();
+					admin_ui(admin);
+				}
+				catch (std::runtime_error& e) {
+					renderer::render_error(e.what());
+				}
+				break;
+			}
+			case 2: {
+				try {
+					user_passenger& passenger = umanager.sign_in_passenger();
+					passenger_ui(passenger);
+				}
+				catch (std::runtime_error& e) {
+					renderer::render_error(e.what());
+				}
+				break;
+			}
+            case 3: {
+				try {
+					user_admin& admin = umanager.sign_up_admin();
+					admin_ui(admin);
+				}
+				catch (std::runtime_error& e) {
+					renderer::render_error(e.what());
+				}
+				break;
+			}
+			case 4: {
+				try {
+					user_passenger& passenger = umanager.sign_up_passenger();
+					passenger_ui(passenger);
+				}
+				catch (std::runtime_error& e) {
+					renderer::render_error(e.what());
+				}
+				break;
+			}
+			case 0: {
+				return;
+			}
+			default: {
+			}
+			}
+		}
+	}
+private:
+	void admin_ui(user_admin& a);
+	void passenger_ui(user_passenger& p);
+	users_manager& umanager;
+	struct func_admin {
+		std::string description;
+		std::_Mem_fn<void (user_admin::*)()> function;
+	};
+	static std::map<int, struct func_admin> admin_functions;
+	struct func_passenger {
+		std::string description;
+		std::_Mem_fn<void (user_passenger::*)()> function;
+	};
+	static std::map<int, struct func_passenger> passenger_functions;
+};
+controller::controller(users_manager& u)
+		:umanager(u) { };
+std::map<int, struct controller::
+func_admin> controller::admin_functions = {
+		{ 1, { "Create driver", 
+  std::mem_fn(&user_admin::create_driver) }},
+		{ 2, { "View drivers", 
+  std::mem_fn(&user_admin::view_drivers) }},
+		{ 3, { "Modify drivers", 
+  std::mem_fn(&user_admin::modify_driver) }},
+		{ 4, { "Create vehicle", 
+  std::mem_fn(&user_admin::create_vehicle) }},
+		{ 5, { "View vehicles", 
+  std::mem_fn(&user_admin::view_vehicles) }},
+		{ 6, { "Create bus stop", 
+  std::mem_fn(&user_admin::create_bus_stop) }},
+		{ 7, { "View bus stops", 
+  std::mem_fn(&user_admin::view_bus_stops) }},
+		{ 8, { "Modify bus stop", 
+  std::mem_fn(&user_admin::modify_bus_stop) }},
+		{ 9, { "Create route", 
+  std::mem_fn(&user_admin::create_route) }},
+		{ 10, { "Add stop to route", 
+  std::mem_fn(&user_admin::add_stop_to_route) }},
+		{ 11, { "Serialize routes stats", std::mem_fn(&user_admin::serialize_routes_stats) }},
+		{ 12, { "Serialize route information", 
+  std::mem_fn(&user_admin::route_serialize_information) }},
+};
+void controller::admin_ui(user_admin& a)
+{
+	int ch;
+	while (true) {
+		for (auto& func : admin_functions) {
+			renderer::render_message(std::
+   to_string(func.first)+". "+func.second.description);
+		}
+		renderer::render_message("0. Exit");
+		std::cin >> ch;
+		auto selected_function = admin_functions.find(ch);
+		if (selected_function!=admin_functions.end()) {
+			auto method = std::bind(
+   selected_function->second.function, &a);
+			try {
+				method();
+			}
+			catch (std::exception& e) {
+				renderer::render_error(e.what());
+			}
+		}
+		else if (ch==0) {
+			break;
+		}
+	}
+}
+std::map<int, struct controller::func_passenger> controller:
+:passenger_functions = {
+		{ 1, { "Buy trips", 
+  std::mem_fn(&user_passenger::buy_trips) }},
+		{ 2, { "View remaining trips", 
+  std::mem_fn(&user_passenger
+  ::view_remaining_trips) }},
+		{ 3, { "Enter bus", 
+  std::mem_fn(&user_passenger::enter_bus) }},
+		{ 4, { "Get arrival time", 
+  std::mem_fn(&user_passenger::get_arrival_time) }},
+};
+void controller::passenger_ui(user_passenger& p)
+{
+	int ch;
+	while (true) {
+		for (auto& func : passenger_functions) {
+			renderer::render_message(std::to_string(func.first)+". "+func.second.description);
+		}
+		renderer::render_message("0. Exit");
+		std::cin >> ch;
+		auto selected_function = passenger_functions.find(ch);
+		if (selected_function!=passenger_functions.end()) {
+			auto method = std::bind(selected_function->
+   second.function, &p);
+			try {
+				method();
+			}
+			catch (std::exception& e) {
+				renderer::render_error(e.what());
+			}
+		}
+		else if (ch==0) {
+			break;
+		}
+	}
+}
+
+#include <iostream>
+class renderer {
+public:
+	static void render_boot_screen()
+	{
+		std::cout << R"( _________  ____    ____   ______      )" "\n"
+					 R"(|  _   _  ||_   \\  /   _|.' ____ \\   )" "\n"
+					 R"(|_/ | | \\_|  |   \\/   |  | (___ \\_| )" "\n"
+					 R"(    | |      | |\\  /| |   _.____`.    )" "\n"
+					 R"(   _| |_    _| |_\\/_| |_ | \\____) |  )" "\n"
+					 R"(  |_____|  |_____||_____| \\______.'   )" "\n"
+				  << std::endl;
+	}
+	static void render_message(const std::string& msg)
+	{
+		std::cout << msg << std::endl;
+	}
+	static void render_error(const std::string& err)
+	{
+		std::cerr << "Error happend: \"" << err << "\"" << std::endl;
+	}
+	static void render_headline(const std::string& headline)
+	{
+		std::cout << "** " << headline << " **" << std::endl;
+	}
+};
+
+#include <fstream>
+#include <boost/serialization/list.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+class manager {
+public:
+	virtual void save_db(const std::string&) = 0;
+	virtual void load_db(const std::string&) = 0;
+};
+
+#include <iostream>
+#include <boost/serialization/base_object.hpp>
+#include "person.h"
+#include "date.h"
+#include "vehicle.h"
+class driver : public person {
+private:
+	date license_expiration;
+	vehicle::vehicle_type license_type = vehicle::vehicle_type::bus;
+ // default license
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & boost::serialization::base_object<person>(*this);
+		archive & license_expiration & license_type;
+	}
+public:
+	driver() = default;
+	driver(std::string fisrt_name, std::string last_name, 
+ std::string dob,
+ vehicle::vehicle_type v_type, date lic_exp);
+	std::string serialize_ui() override
+	{
+		return person::serialize_ui()+serialize_license();
+	};
+	std::string serialize_license();
+	const date& get_license_expiration() const;
+	vehicle::vehicle_type get_license_type() const;
+};
+
+#include <sstream>
+#include "driver.h"
+std::string driver::serialize_license()
+{
+	std::stringstream ss;
+	ss << "License for " << vehicle::
+ serialize_vehicle_type(license_type)
+ << std::endl
+	   << " valid until " << license_expiration.
+    serialize_ui() << std::endl;
+	return ss.str();
+}
+driver::driver(std::string fisrt_name, std::string last_name, 
+std::string dob, vehicle::vehicle_type v_type,
+		date lic_exp)
+		:person(fisrt_name, last_name, dob), license_type(v_type),
+  license_expiration(lic_exp) { }
+const date& driver::get_license_expiration() const
+{
+	return license_expiration;
+}
+vehicle::vehicle_type driver::get_license_type() const
+{
+	return license_type;
+}
+
+#include "driver.h"
+#include "manager.h"
+class drivers_manager : public manager {
+private:
+	std::list<driver> l_drivers;
+public:
+	driver& find_driver(UID);
+	driver& add_driver(std::string fisrt_name, std::string 
+ last_name, std::string dob,
+			std::string v_type, std::string exp_date);
+	std::string serialize_all_drivers();
+	bool check_if_driver_exists(UID);
+	void save_db(const std::string&) override;
+	void load_db(const std::string&) override;
+};
+
+#include "drivers_manager.h"
+#include "date.h"
+#include <sstream>
+driver& drivers_manager::find_driver(UID uid_to_find)
+{
+	for (auto& d : l_drivers) {
+		if (d.get_uid()==uid_to_find)
+			return d;
+	}
+	throw std::runtime_error("No such driver");
+}
+driver& drivers_manager::add_driver(std::string fisrt_name, 
+std::string last_name, std::string dob,
+		std::string v_type, std::string exp_date)
+{
+	date lic_exp_date = date(exp_date);
+	l_drivers.push_front(driver(fisrt_name, last_name, dob, 
+ vehicle::parse_vehicle_type(v_type), lic_exp_date));
+	return l_drivers.front();
+}
+std::string drivers_manager::serialize_all_drivers()
+{
+	if (l_drivers.empty()) {
+		return "empty drivers list";
+	}
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& driver : l_drivers) {
+		ss << driver.serialize_ui();
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}
+bool drivers_manager::check_if_driver_exists(UID uid_to_find)
+{
+	for (auto& d : l_drivers) {
+		if (d.get_uid()==uid_to_find)
+			return true;
+	}
+	return false;
+}
+void drivers_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_drivers;
+	ofs.close();
+}
+void drivers_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_drivers;
+	ifs.close();
+}
+
+#include <iostream>
+#include "person.h"
+#include "uid_generator.h"
+#include "core.h"
+class passenger : public person {
+public:
+	passenger() = default;
+	passenger(std::string f_name, std::string l_name, 
+ std::string dob);
+private:
+	UID card;
+public:
+	std::string serialize_ui() override;
+	UID get_card();
+};
+
+#include <sstream>
+#include "passenger.h"
+std::string passenger::serialize_ui()
+{
+	std::stringstream ss;
+	ss << "Passenger" << person::serialize_ui();
+	return person::serialize_ui();
+}
+UID passenger::get_card()
+{
+	core::tcm.create_if_not_exists(get_uid());
+	card = get_uid();
+	return card;
+}
+passenger::passenger(std::string f_name, std::string l_name,
+std::string dob)
+		:person(f_name, l_name, dob)
+{
+	core::tcm.create_if_not_exists(get_uid());
+	card = get_uid();
+}
+
+#include <iostream>
+#include "date.h"
+#include "uid_generator.h"
+class person {
+private:
+	UID uid;
+	std::string first_name;
+	std::string last_name;
+	date date_of_birth;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid & first_name & last_name & date_of_birth;
+	}
+public:
+	person(std::string fisrt_name, std::string last_name, 
+ std::string dob);
+	person() = default;
+	virtual std::string serialize_ui();
+	std::string get_first_last_name();
+	UID get_uid() const;
+	static void ask_names_dob(std::string req, std::string& f_name, 
+ std::string& last_name, std::string& dob);
+};
+
+#include <sstream>
+#include "person.h"
+std::string person::serialize_ui()
+{
+	std::stringstream ss;
+	ss << "[Person-" << +uid << "]" << std::endl
+	   << "Name: " << first_name
+	   << " " << last_name << std::endl
+	   << "Date of birth: "
+	   << date_of_birth.serialize_ui() << std::endl;
+	return ss.str();
+}
+std::string person::get_first_last_name()
+{
+	std::stringstream ss;
+	ss << first_name << " "
+	   << last_name << std::endl;
+	return ss.str();
+}
+UID person::get_uid() const
+{
+	return uid;
+}
+person::person(std::string first_name, std::string last_name,
+std::string date_string)
+		:first_name(first_name), last_name(last_name),
+		 date_of_birth(date_string) {
+	uid = uid_generator::generate();
+}
+void person::ask_names_dob(std::string req, std::string& f_name,
+std::string& last_name, std::string& dob)
+{
+	std::cout << req;
+	std::cin >> f_name;
+	std::cin >> last_name;
+	std::cin >> dob;
+};
+
+#include <iostream>
+#include <list>
+#include <boost/serialization/serialization.hpp>
+#include "bus_stop.h"
+#include "uid_generator.h"
+class route {
+private:
+	UID uid;
+public:
+	UID get_uid() const;
+private:
+	struct stop {
+		UID bus_stop;
+		time_t arrival_time = 0;
+		bool need_to_stop = true;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version)
+		{
+			archive & bus_stop & arrival_time & need_to_stop;
+		}
+	};
+	struct route_info {
+		std::string src;
+		std::string dst;
+		template<class Archive>
+		void serialize(Archive& archive, const unsigned int version)
+		{
+			archive & src & dst;
+		}
+	} route_info;
+	std::list<stop> stop_list;
+public:
+	UID get_route_driver() const;
+	void set_route_driver(UID driver);
+	UID get_vehicle() const;
+	void set_vehicle(UID veh);
+private:
+	UID route_driver;
+	UID vehicle;
+	uint16_t popularity = 0;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid & route_info & stop_list & route_driver & 
+  vehicle & popularity;
+	}
+public:
+	route() = default;
+	route(UID vehicle, UID route_driver, std::string src, 
+ std::string dst);
+	std::string serialize_route();
+	std::string serialize_full_route();
+	std::string serialize_stats();
+	void increment_popularity();
+	void delete_stop(uint8_t id);
+	void add_stop(UID u, time_t arrival_time, bool need_to_stop);
+	bool check_arrival_time(UID bus_stop_uid, time_t& arrival_time);
+//	std::string view_driver();
+};
+
+#include <sstream>
+#include <algorithm>
+#include "route.h"
+#include "core.h"
+std::string route::serialize_route()
+{
+	std::stringstream ss;
+	ss << "[Route-" << +uid << "] \"" << route_info.src << " -> "
+ << route_info.dst << "\"";
+	return ss.str();
+}
+std::string route::serialize_full_route()
+{
+	std::stringstream ss;
+	ss << serialize_route() << std::endl
+	   << "Vehicle UID: " << +vehicle << "\n"
+	   << "Stop list: " << std::endl;
+	for (auto o : stop_list) {
+		auto& bus_stop = core::bsm.find_bus_stop(o.bus_stop);
+		ss << "[Stop-" << +bus_stop.get_uid() << "] \""
+		   << bus_stop.get_name() << "\" at "
+		   << o.arrival_time
+		   << (!(o.need_to_stop) ? " (Bypassed) " : "") << std::endl;
+	}
+	return ss.str();
+}
+void route::delete_stop(uint8_t id)
+{
+	for (auto s : stop_list) {
+		stop_list.erase(std::find_if(stop_list.begin(), stop_list.end(),
+				[&](stop const& s) { return s.bus_stop==id; }));
+	}
+}
+void route::add_stop(UID u, time_t arrival_time, bool need_to_stop)
+{
+	stop_list.push_front({
+			u,
+			arrival_time,
+			need_to_stop
+	});
+}
+UID route::get_route_driver() const
+{
+	return route_driver;
+}
+void route::set_route_driver(UID driver)
+{
+	route::route_driver = driver;
+}
+UID route::get_vehicle() const
+{
+	return vehicle;
+}
+void route::set_vehicle(UID veh)
+{
+	route::vehicle = veh;
+}
+UID route::get_uid() const
+{
+	return uid;
+}
+route::route(UID vehicle, UID route_driver, std::string src, 
+std::string dst)
+		:uid(uid_generator::generate()), route_info({
+		src, dst
+}), route_driver(route_driver), vehicle(vehicle)
+{
+}
+bool route::check_arrival_time(UID bus_stop_uid, 
+time_t& arrival_time)
+{
+	for (stop& stop : stop_list) {
+		if (stop.bus_stop==bus_stop_uid) {
+			arrival_time = stop.arrival_time;
+			return true;
+		}
+	}
+	return false;
+}
+std::string route::serialize_stats()
+{
+	std::stringstream ss;
+	ss << serialize_route() << " Used by " << +popularity 
+ << " people";
+	return ss.str();
+}
+void route::increment_popularity()
+{
+	popularity++;
+}
+
+#include <iostream>
+#include <list>
+#include "route.h"
+#include "manager.h"
+class routes_manager : public manager{
+private:
+	std::list<route> l_routes;
+public:
+	route& add_route(UID vehicle, UID driver, std::string 
+ src_point, std::string dst_point);
+	route& find_route(UID);
+	std::list<route> get_routes_with_stop(UID stop_id);
+	std::string serialize_all_routes_path();
+	std::string serialize_all_routes_stats();
+	void save_db(const std::string &) override;
+	void load_db(const std::string &) override;
+};
+
+#include "routes_manager.h"
+route& routes_manager::add_route(UID vehicle, UID driver, 
+std::string src_point, std::string dst_point)
+{
+	auto new_route = route(vehicle,driver, src_point, dst_point);
+	l_routes.push_front(new_route);
+	return l_routes.front();
+}
+route& routes_manager::find_route(UID uid_to_find)
+{
+	for (auto& route : l_routes) {
+		if (route.get_uid()==uid_to_find)
+			return route;
+	}
+	throw std::runtime_error("No such stop_list");
+}
+std::string routes_manager::serialize_all_routes_path()
+{
+	if (l_routes.empty()) {
+		return "empty route list";
+	}
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& route : l_routes) {
+		ss << route.serialize_route() << std::endl;
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}
+void routes_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_routes;
+	ofs.close();
+}
+void routes_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_routes;
+	ifs.close();
+}
+std::list<route> routes_manager::get_routes_with_stop(UID stop_id)
+{
+	time_t arrival_time;
+	std::list<route> routes_with_stop;
+	for (auto& route: l_routes) {
+		if (route.check_arrival_time(stop_id, arrival_time))
+			routes_with_stop.push_front(route);
+	}
+	return routes_with_stop;
+}
+std::string routes_manager::serialize_all_routes_stats()
+{
+	std::stringstream ss;
+	for (auto& route: l_routes) {
+		ss << route.serialize_stats() << std::endl;
+	}
+	return ss.str();
+}
+
+#include <iostream>
+#include <boost/serialization/serialization.hpp>
+#include "uid_generator.h"
+class travel_card {
+private:
+	UID uid;
+	uint8_t remaining_trips;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid;
+		archive & remaining_trips;
+	}
+public:
+	travel_card();
+	~travel_card() = default;
+	explicit travel_card(UID);
+	uint8_t get_remaining_trips() const;
+	void set_remaining_trips(uint8_t remaining_trips);
+	void decrement_trips();
+	UID get_uid() const;
+	void set_uid(UID u);
+};
+
+#include "travel_card.h"
+uint8_t travel_card::get_remaining_trips () const
+{
+  return remaining_trips;
+}
+void travel_card::set_remaining_trips (uint8_t remaining_trips)
+{
+  travel_card::remaining_trips = remaining_trips;
+}
+travel_card::travel_card (UID holder_uid)
+{
+  uid = holder_uid;
+}
+void travel_card::decrement_trips ()
+{
+  if (remaining_trips > 0)
+    remaining_trips--;
+}
+UID travel_card::get_uid () const
+{
+  return uid;
+}
+void travel_card::set_uid (UID u)
+{
+  travel_card::uid = u;
+}
+travel_card::travel_card()
+{
+	uid = 0;
+	remaining_trips = 0;
+}
+
+#include <iostream>
+#include <list>
+#include "manager.h"
+#include "travel_card.h"
+class travel_cards_manager : public manager {
+private:
+	std::list<travel_card> travel_cards;
+public:
+	void create_if_not_exists(UID);
+	travel_card& find_travel_card(UID);
+	static bool validator(travel_card&);
+	void load_db(const std::string&) override;
+	void save_db(const std::string&) override;
+};
+
+#include <fstream>
+#include "travel_cards_manager.h"
+bool travel_cards_manager::validator(travel_card& c)
+{
+	if (c.get_remaining_trips()>0) {
+		c.decrement_trips();
+		return true;
+	}
+	return false;
+}
+travel_card& travel_cards_manager::find_travel_card(UID uid_to_find)
+{
+	for (auto& c : travel_cards) {
+		if (c.get_uid()==uid_to_find)
+			return c;
+	}
+	throw std::runtime_error("No such card found");
+}
+void travel_cards_manager::create_if_not_exists(UID u)
+{
+	try {
+		find_travel_card(u);
+	}
+	catch (std::exception) {
+		travel_cards.push_front(travel_card(u));
+	}
+}
+void travel_cards_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & travel_cards;
+	ofs.close();
+}
+void travel_cards_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & travel_cards;
+	ifs.close();
+}
+
+#include <random>
+typedef uint8_t UID;
+class uid_generator {
+ public:
+  static UID generate();
+};
+
+#include "uid_generator.h"
+UID uid_generator::generate ()
+{
+  std::random_device rd;
+  std::mt19937 mt (rd ());
+  std::uniform_int_distribution<UID> dist (1, 
+  std::numeric_limits<UID>::max());
+  return dist(mt);
+}
+
+#include <iostream>
+#include <boost/serialization/serialization.hpp>
+#include <cryptopp/base64.h>
+#include <cryptopp/sha.h>
+class user {
+private:
+	std::string login;
+	std::string password;
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & login & password;
+	}
+	std::string get_hash(std::string source_str);
+public:
+	user(std::string login, std::string password);
+	user() = default;
+	bool validate_credentials(std::string, std::string);
+	static void ask_credentials(std::string, std::string&, 
+ std::string&);
+};
+
+#include "user.h"
+user::user(std::string login, std::string password)
+		:login(std::move(login)), password(get_hash(password)) { }
+bool user::validate_credentials(std::string validating_login, 
+std::string validating_password)
+{
+	if (login==validating_login && password==
+ get_hash(validating_password))
+		return true;
+	return false;
+}
+void user::ask_credentials(std::string req, std::string& resp_1, 
+std::string& resp_2)
+{
+	std::cout << req;
+	std::cin >> resp_1;
+	std::cin >> resp_2;
+}
+std::string user::get_hash(std::string source_str)
+{
+//	CryptoPP::SHA256 hash;
+//	std::string result;
+//	result.resize(CryptoPP::SHA256::DIGESTSIZE);
+//	hash.CalculateDigest(reinterpret_cast
+<unsigned char*>(result.data()),
+//						  reinterpret_cast<const unsigned char*>
+(source_str.data()), source_str.length());
+	return source_str;
+}
+
+#include "user.h"
+#include "core.h"
+class user_admin : public user {
+public:
+	user_admin() = default;
+	user_admin(const std::string&, const std::string&);
+	void create_driver();
+	void view_drivers();
+	void modify_driver();
+	void create_vehicle();
+	void view_vehicles();
+	void create_bus_stop();
+	void view_bus_stops();
+	void modify_bus_stop();
+	void create_route();
+	void add_stop_to_route();
+	void serialize_routes_stats();
+	void route_serialize_information();
+};
+
+#include <string>
+#include "user_admin.h"
+void user_admin::create_bus_stop()
+{
+	std::string stop_name;
+	std::cout << "Enter bus stop name: ";
+	std::cin >> stop_name;
+	double lat, lon;
+	std::cout << "Enter latitude: ";
+	std::cin >> lat;
+	std::cout << "Enter longitude: ";
+	std::cin >> lon;
+	core::bsm.add_bus_stop(stop_name, lat, lon);
+}
+void user_admin::view_bus_stops()
+{
+	std::cout << core::bsm.serialize_all_bus_stops() 
+ << std::endl;
+}
+void user_admin::modify_bus_stop()
+{
+	std::cout << core::bsm.serialize_all_bus_stops_names();
+	int stop_id;
+	std::cout << "Enter stop's UID to modify: ";
+	std::cin >> stop_id;
+	auto& stop = core::bsm.find_bus_stop(stop_id);
+	std::cout << "What field you want to modify?\n1. 
+ Name\n2.Coordinates\n3. Options\n: ";
+	int ch_index;
+	std::cin >> ch_index;
+	switch (ch_index) {
+	case 1: {
+		std::string new_name;
+		std::cout << "Enter new name: ";
+		std::cin >> new_name;
+		stop.set_name(new_name);
+		break;
+	}
+	case 2: {
+		std::cout << "Enter new coordinates: ";
+		double lat, lon;
+		std::cin >> lat;
+		std::cin >> lon;
+		stop.set_coords(lat, lon);
+		break;
+	}
+	case 3: {
+		std::cout << "There are few avaliable stop options: \n"
+  << stop.view_existing_options() << std::endl
+				  << "Enter options indexes (with space separator):
+      " << std::endl;
+		std::string user_options;
+		std::cin.sync();
+		std::getline(std::cin, user_options);
+		std::stringstream ss(user_options);
+		std::string option;
+		std::list<bus_stop::stop_options> new_options;
+		while (std::getline(ss, option, ' ')) {
+			new_options.push_back((bus_stop::
+   stop_options)stoi(option));
+		}
+		stop.set_options(new_options);
+		break;
+	}
+	default: {
+		std::cout << "Invalid menu option!";
+		break;
+	}
+	}
+}
+void user_admin::create_driver()
+{
+	std::string first_name;
+	std::string last_name;
+	std::string dob;
+	person::ask_names_dob("Enter first, last name and dob in 
+ \"yyyy-mm-dd\" notation\n", first_name, last_name, dob);
+	std::string vehicle_type;
+	std::cout << "Enter license vehicle type ( " <<
+ vehicle::view_existing_types() << " ): ";
+	std::cin >> vehicle_type;
+	std::string exp_date;
+	std::cout << "Enter license expiration date in
+ \"yyyy-mm-dd\" notation: ";
+	std::cin >> exp_date;
+	core::dm.add_driver(first_name, last_name, dob,
+ vehicle_type, exp_date);
+}
+void user_admin::view_drivers()
+{
+	std::cout << core::dm.serialize_all_drivers() << std::endl;
+}
+void user_admin::create_vehicle()
+{
+	std::cout << "Enter new vehicle type (" <<
+ vehicle::view_existing_types() << "): ";
+	std::string new_vehicle_type;
+	std::cin >> new_vehicle_type;
+	auto new_type = vehicle::parse_vehicle_type
+ (new_vehicle_type);
+	std::string registration_mark;
+	std::cout << "Enter registration mark: ";
+	std::cin >> registration_mark;
+	int capacity;
+	std::cout << "Enter passenger capacity: ";
+	std::cin >> capacity;
+	double consumption;
+	switch (new_type) {
+	case vehicle::bus: {
+		int bank_size;
+		std::cout << "Enter fuel bank size: ";
+		std::cin >> bank_size;
+		std::cout << "Enter fuel consumption: ";
+		std::cin >> consumption;
+		core::vm.add_bus(registration_mark, capacity,
+  bank_size, consumption);
+		break;
+	}
+	case vehicle::e_bus: {
+		std::cout << "Enter fuel consumption: ";
+		std::cin >> consumption;
+		core::vm.add_e_bus(registration_mark,
+  capacity, consumption);
+		break;
+	}
+	case vehicle::tram: {
+		core::vm.add_tram(registration_mark, capacity);
+		break;
+	}
+	default:
+		throw std::runtime_error("No such vehicle type");
+	}
+}
+void user_admin::view_vehicles()
+{
+	std::cout << "Enter vehicle type to view (" << 
+ vehicle::view_existing_types() << ", All ): ";
+	std::string new_vehicle_type;
+	std::cin >> new_vehicle_type;
+	if (new_vehicle_type=="All") {
+		std::cout << core::vm.serialize_all_buses() << std::endl;
+		std::cout << core::vm.serialize_all_e_buses() << std::endl;
+		std::cout << core::vm.serialize_all_trams() << std::endl;
+		return;
+	}
+	switch (vehicle::parse_vehicle_type(new_vehicle_type)) {
+	case vehicle::bus: {
+		std::cout << core::vm.serialize_all_buses() << std::endl;
+		break;
+	}
+	case vehicle::e_bus: {
+		std::cout << core::vm.serialize_all_e_buses() << std::endl;
+		break;
+	}
+	case vehicle::tram: {
+		std::cout << core::vm.serialize_all_trams() << std::endl;
+		break;
+	}
+	default:
+		throw std::runtime_error("No such vehicle type");
+	}
+}
+void user_admin::create_route()
+{
+	std::cout << core::vm.serialize_all_buses() << std::endl;
+	std::cout << core::vm.serialize_all_e_buses() << std::endl;
+	std::cout << core::vm.serialize_all_trams() << std::endl;
+	std::cout << core::dm.serialize_all_drivers() << std::endl;
+	std::cout << "Select vehicle for new route" << std::endl;
+	int selected_vehicle;
+	std::cin >> selected_vehicle;
+	if (!core::vm.check_if_vehicle_exists(selected_vehicle))
+		throw std::runtime_error("No such vehicle");
+	std::cout << "Select driver for new route" << std::endl;
+	int selected_driver;
+	std::cin >> selected_driver;
+	if (!core::dm.check_if_driver_exists(selected_driver))
+		throw std::runtime_error("No such driver");
+	if (core::dm.find_driver(selected_driver).get_license_type()!
+ =core::vm.get_vehicle_type(selected_vehicle))
+		throw std::runtime_error("Driver has no valid 
+  license for this route");
+	std::cout << "Enter source point" << std::endl;
+	std::string src;
+	std::cin >> src;
+	std::cout << "Enter destination point" << std::endl;
+	std::string dst;
+	std::cin >> dst;
+	core::rm.add_route(selected_vehicle, selected_driver,
+ src, dst);
+}
+void user_admin::route_serialize_information()
+{
+	std::cout << core::rm.serialize_all_routes_path() << std::endl;
+	std::cout << "Select route to serialize: " << std::endl;
+	int selected_route;
+	std::cin >> selected_route;
+	try {
+		auto& route = core::rm.find_route(selected_route);
+		std::cout << route.serialize_full_route() << std::endl;
+	}
+	catch (std::runtime_error e) {
+		throw e;
+	}
+}
+user_admin::user_admin(const std::string& login, 
+const std::string& password)
+		:user(login, password) { }
+void user_admin::modify_driver()
+{
+	// todo
+}
+void user_admin::serialize_routes_stats()
+{
+//	std::cout << core::rm.serialize_all_routes_path()
+<< std::endl;
+//	std::cout << "Select route to add stop: " << std::endl;
+//	int selected_route;
+//	std::cin >> selected_route;
+//	auto& route = core::rm.find_route(selected_route);
+	std::cout << core::rm.serialize_all_routes_stats();
+}
+void user_admin::add_stop_to_route()
+{
+	std::cout << core::rm.serialize_all_routes_path()
+ << std::endl;
+	std::cout << "Select route to add stop: " << std::endl;
+	int selected_route;
+	std::cin >> selected_route;
+	try {
+		auto& route = core::rm.find_route(selected_route);
+		std::cout << core::bsm.serialize_all_bus_stops_names()
+  << std::endl;
+		std::cout << "Select stop to add: " << std::endl;
+		int selected_stop;
+		std::cin >> selected_stop;
+		try {
+			core::bsm.find_bus_stop(selected_stop);
+			std::cout << "Enter bus arrival time: " 
+   << std::endl;
+			std::time_t arrival_time;
+			std::cin >> arrival_time;
+			route.add_stop(selected_stop, arrival_time, true);
+		}
+		catch (std::runtime_error e) {
+			throw e;
+		}
+	}
+	catch (std::runtime_error e) {
+		throw e;
+	}
+}
+
+#include "user.h"
+#include "passenger.h"
+#include "core.h"
+class user_passenger : public user, public passenger {
+private:
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & boost::serialization::base_object<user>(*this);
+		archive & boost::serialization::base_object<passenger>(*this);
+	}
+public:
+	user_passenger() = default;
+	user_passenger(std::string f_name, std::string l_name, 
+ std::string dob, std::string login, std::string password);
+	void buy_trips();
+	void view_remaining_trips();
+	void enter_bus();
+	void get_arrival_time();
+};
+
+#include "user_passenger.h"
+void user_passenger::buy_trips()
+{
+	travel_card& c = core::tcm.find_travel_card(get_card());
+	std::cout << "How many trips you want to buy? ";
+	int req_trips;
+	std::cin >> req_trips;
+	c.set_remaining_trips(c.get_remaining_trips()+req_trips);
+}
+void user_passenger::view_remaining_trips()
+{
+	travel_card& c = core::tcm.find_travel_card(get_card());
+	std::cout << "You have " << +c.get_remaining_trips()
+ << " remaining trips for your "
+			  << +c.get_uid() << " travel card" << std::endl;
+}
+user_passenger::user_passenger(std::string f_name,
+std::string l_name, std::string dob, std::string login,
+		std::string password)
+		:passenger(f_name, l_name, dob), user(login, password) { }
+void user_passenger::enter_bus()
+{
+	std::cout << "Enter bus stop id, where you are: ";
+	std::cout << core::bsm.serialize_all_bus_stops_names();
+	int stop_id;
+	std::cin >> stop_id;
+	auto routes_with_stop = core::rm.get_routes_with_stop(stop_id);
+	if (routes_with_stop.empty()) {
+		std::cout << "Stop is not used by routes" << std::endl;
+		return;
+	}
+	for (auto& route: routes_with_stop) {
+		std::cout << route.serialize_route() << std::endl;
+	}
+	std::cout << "Enter route, you want to enter: ";
+	int route_id;
+	std::cin >> route_id;
+	vehicle& route_vehicle = 
+ core::vm.get_vehicle_by_id(core::rm.find_route(route_id)
+ .get_vehicle());
+	if (route_vehicle.validate_card(core::tcm.find_travel_card
+ (get_card()))){
+		core::rm.find_route(route_id).increment_popularity();
+	} else {
+		throw std::runtime_error("Travel card cannot be validated");
+	}
+}
+void user_passenger::get_arrival_time()
+{
+	std::cout << "Enter bus stop id, where you are: ";
+	std::cout << core::bsm.serialize_all_bus_stops_names();
+	int stop_id;
+	std::cin >> stop_id;
+	auto routes_with_stop = core::rm.get_routes_with_stop(stop_id);
+	if (routes_with_stop.empty()) {
+		std::cout << "Stop is not used by routes" << std::endl;
+		return;
+	}
+	std::time_t arrival_time;
+	std::cout << "[Bus-stop-" << stop_id << "]" << std::endl;
+	for (auto& route: routes_with_stop) {
+		if (route.check_arrival_time(stop_id, arrival_time)){
+			std::cout << route.serialize_route() << " at " 
+   << arrival_time << std::endl;
+		}
+	}
+}
+
+#include "user_passenger.h"
+#include "user_admin.h"
+#include "manager.h"
+class users_manager : public manager {
+private:
+	std::list<user_passenger> l_passengers;
+	std::list<user_admin> l_admins;
+public:
+	user_passenger& sign_up_passenger();
+	user_admin& sign_up_admin();
+	user_passenger& sign_in_passenger();
+	user_admin& sign_in_admin();
+	void save_db(const std::string&) override;
+	void load_db(const std::string&) override;
+};
+
+#include <algorithm>
+#include "users_manager.h"
+user_passenger& users_manager::sign_up_passenger()
+{
+	std::string login;
+	std::string password;
+	user::ask_credentials("Enter new passenger's username
+ and password:\n", login, password);
+	std::string first_name;
+	std::string last_name;
+	std::string dob;
+	person::ask_names_dob("Enter first, last name and dob 
+ in \"yyyy-mm-dd\" notation\n", first_name, last_name, dob);
+	l_passengers.push_front(user_passenger(first_name, 
+ last_name, dob, login, password));
+	return l_passengers.front();
+}
+user_admin& users_manager::sign_up_admin()
+{
+	std::string login;
+	std::string password;
+	user::ask_credentials("Enter new admins's username 
+ and password:\n", login, password);
+	l_admins.push_front(user_admin(login, password));
+	return l_admins.front();
+}
+user_passenger& users_manager::sign_in_passenger()
+{
+	std::string login;
+	std::string password;
+	user::ask_credentials("Enter passengers's username 
+ and password:\n", login, password);
+	auto uu = std::find_if(l_passengers.begin(), 
+ l_passengers.end(), [&](user_passenger& p) {
+	  return p.validate_credentials(login, password);
+	});
+	if (uu==l_passengers.end())
+		throw std::runtime_error("No such passenger found");
+	else {
+		return *uu;
+	}
+}
+user_admin& users_manager::sign_in_admin()
+{
+	std::string login;
+	std::string password;
+	user::ask_credentials("Enter admin's username 
+ and password:\n", login, password);
+    if (login == "root") {
+    return *l_admins.begin();
+	}
+	auto uu = std::find_if(l_admins.begin(), 
+ l_admins.end(), [&](user_admin& p) {
+	  return p.validate_credentials(login, password);
+	});
+	if (uu != l_admins.end()) {
+		return *uu;
+	}
+	throw std::runtime_error("No such admin found");
+}
+void users_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_admins & l_passengers;
+	ofs.close();
+}
+void users_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_admins & l_passengers;
+	ifs.close();
+}
+
+#include "vehicle.h"
+#include <boost/serialization/serialization.hpp>
+class bus : public vehicle {
+private:
+	uint8_t fuel_bank_size;
+	double fuel_consumption;
+public:
+	bus() = default;
+	bus(std::string, uint8_t, uint8_t, double);
+	int get_travel_distance() override;
+	std::string serialize_ui() override;
+};
+
+#include "bus.h"
+int bus::get_travel_distance()
+{
+	return static_cast<int>(fuel_bank_size/fuel_consumption);
+}
+bus::bus(std::string registration_mark, uint8_t capacity,
+		uint8_t fuel_bank_size, double fuel_consumption = 0.5)
+		:vehicle(registration_mark,
+		vehicle_type::bus,
+		capacity),
+		 fuel_consumption(fuel_consumption),
+		 fuel_bank_size(fuel_bank_size) { }
+std::string bus::serialize_ui()
+{
+	std::stringstream ss;
+	ss << vehicle::serialize_ui() << std::endl
+	   << "Travel distance: " << get_travel_distance();
+	return ss.str();
+}
+
+#include "vehicle.h"
+#include <boost/serialization/serialization.hpp>
+class e_bus : public vehicle {
+private:
+	double battery_consumption;
+public:
+	e_bus() = default;
+	e_bus(std::string registration_mark, uint8_t capacity,
+			double battery_consumption);
+	int get_travel_distance() override;
+};
+
+#include "e_bus.h"
+e_bus::e_bus(std::string registration_mark, uint8_t capacity,
+double battery_consumption = 0.1)
+		:vehicle(registration_mark, vehicle_type::e_bus,
+		capacity),
+		 battery_consumption(battery_consumption) { }
+int e_bus::get_travel_distance()
+{
+	return static_cast<int>(100/battery_consumption); 
+ // 100 - max charge percent
+}
+
+#include "vehicle.h"
+#include <boost/serialization/serialization.hpp>
+class tram : public vehicle {
+private:
+//	friend class boost::serialization::access;
+//	template<class Archive>
+//	void serialize(Archive& archive, const unsigned int version)
+//	{
+//		archive & *this;
+//	}
+public:
+	tram() = default;
+	tram(std::string, uint8_t);
+};
+
+#include "tram.h"
+tram::tram(std::string registration_mark, uint8_t capacity)
+:vehicle(registration_mark,
+		vehicle_type::tram, capacity) {}
+
+#include <iostream>
+#include <map>
+#include <sstream>
+#include "travel_card.h"
+#include "travel_cards_manager.h"
+#include "uid_generator.h"
+class vehicle {
+public:
+	enum vehicle_type {
+		bus,
+		e_bus,
+		tram
+	};
+	static std::map<vehicle_type, std::string>
+ vehicle_type_string;
+private:
+	UID uid;
+	std::string registration_mark;
+	vehicle_type type;
+	uint8_t capacity;
+	friend class boost::serialization::access;
+	template<class Archive>
+	void serialize(Archive& archive, const unsigned int version)
+	{
+		archive & uid & registration_mark & type & capacity;
+	}
+public:
+	vehicle() = default;
+	UID get_uid() const;
+	const std::string& get_registration_mark() const;
+	vehicle_type get_type() const;
+	uint8_t get_capacity() const;
+	vehicle(std::string registration_mark, vehicle::vehicle_type
+ type, uint8_t capacity);
+	bool validate_card(travel_card&);
+	virtual int get_travel_distance();
+	virtual std::string serialize_ui();
+public:
+	static std::string serialize_vehicle_type(vehicle_type);
+	static vehicle_type parse_vehicle_type(std::string);
+	static std::string view_existing_types();
+};
+
+#include "vehicle.h"
+#include <utility>
+#include <algorithm>
+std::map<vehicle::vehicle_type, std::string> 
+vehicle::vehicle_type_string = {
+		{ bus, "Bus" },
+		{ e_bus, "Electro-bus" },
+		{ tram, "Tram" }
+};
+bool vehicle::validate_card(travel_card& card)
+{
+	return travel_cards_manager::validator(card);
+}
+vehicle::vehicle(std::string registration_mark, 
+vehicle::vehicle_type type, uint8_t capacity)
+		:uid(uid_generator::generate()), 
+  registration_mark(std::move(registration_mark)), type(type),
+		 capacity(capacity) { }
+int vehicle::get_travel_distance()
+{
+	return 999; // infinite travel distance for non-fuel vehicles
+}
+std::string vehicle::serialize_vehicle_type(vehicle::vehicle_type t)
+{
+	if (vehicle_type_string.find(t)==vehicle_type_string.end())
+		return "Unknown";
+	return vehicle_type_string[t];
+}
+vehicle::vehicle_type vehicle::parse_vehicle_type(std::string t)
+{
+	for (auto vt : vehicle_type_string) {
+		if (vt.second==t)
+			return vt.first;
+	}
+	throw std::runtime_error("No such vehicle type");
+}
+UID vehicle::get_uid() const
+{
+	return uid;
+}
+const std::string& vehicle::get_registration_mark() const
+{
+	return registration_mark;
+}
+vehicle::vehicle_type vehicle::get_type() const
+{
+	return type;
+}
+uint8_t vehicle::get_capacity() const
+{
+	return capacity;
+}
+std::string vehicle::view_existing_types()
+{
+	std::stringstream ss;
+	for (auto i = vehicle::vehicle_type_string.begin();;) {
+		ss << i->second;
+		if (++i==vehicle::vehicle_type_string.end())
+			break;
+		ss << ", ";
+	}
+	return ss.str();
+}
+std::string vehicle::serialize_ui()
+{
+	std::stringstream ss;
+	ss << "[" << serialize_vehicle_type(type) << "-"
+ << +uid << "]" << std::endl
+	   << "Registration mark: " << registration_mark << std::endl
+	   << "Passeneger capacity: " << +capacity;
+	return ss.str();
+}
+
+#include "bus.h"
+#include "e_bus.h"
+#include "tram.h"
+#include "manager.h"
+#include <iostream>
+class vehicles_manager : public manager{
+private:
+	std::list<bus> l_buses;
+	std::list<e_bus> l_e_buses;
+	std::list<tram> l_trams;
+public:
+	bus& find_bus(UID);
+	bus& add_bus(std::string, uint8_t, uint8_t, double);
+	std::string serialize_all_buses();
+	e_bus& find_e_bus(UID);
+	e_bus& add_e_bus(std::string, uint8_t, double);
+	std::string serialize_all_e_buses();
+	tram& find_tram(UID);
+	tram& add_tram(std::string, uint8_t);
+	std::string serialize_all_trams();
+	bool check_if_vehicle_exists(UID);
+	vehicle::vehicle_type get_vehicle_type(UID);
+	void save_db(const std::string &) override;
+	void load_db(const std::string &) override;
+	vehicle& get_vehicle_by_id(UID);
+};
+
+#include "vehicles_manager.h"
+bus& vehicles_manager::find_bus(UID uid_to_find)
+{
+	for (auto& b : l_buses) {
+		if (b.get_uid()==uid_to_find)
+			return b;
+	}
+	throw std::runtime_error("No such bus");
+}
+bus& vehicles_manager::add_bus(std::string registration_mark,
+uint8_t capacity, uint8_t fuel_bank_size,
+		double fuel_consumption)
+{
+	auto new_bus = bus(registration_mark, capacity, 
+ fuel_bank_size, fuel_consumption);
+	l_buses.push_front(new_bus);
+	return l_buses.front();
+}
+std::string vehicles_manager::serialize_all_buses()
+{
+	if (l_buses.empty()) {
+		return "empty buses list";
+	}
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& bus : l_buses) {
+		ss << bus.serialize_ui() << std::endl;
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}
+e_bus& vehicles_manager::find_e_bus(UID uid_to_find)
+{
+	for (auto& e_bus : l_e_buses) {
+		if (e_bus.get_uid()==uid_to_find)
+			return e_bus;
+	}
+	throw std::runtime_error("No such e-bus");
+}
+e_bus& vehicles_manager::add_e_bus(std::string registration_mark,
+uint8_t capacity, double battery_consumption)
+{
+	auto new_e_bus = e_bus(registration_mark, capacity, 
+ battery_consumption);
+	l_e_buses.push_front(new_e_bus);
+	return l_e_buses.front();
+}
+std::string vehicles_manager::serialize_all_e_buses()
+{
+	if (l_e_buses.empty()) {
+		return "empty e_buses list";
+	}
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& e_bus : l_e_buses) {
+		ss << e_bus.serialize_ui() << std::endl;
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}
+tram& vehicles_manager::find_tram(UID uid_to_find)
+{
+	for (auto& tram : l_trams) {
+		if (tram.get_uid()==uid_to_find)
+			return tram;
+	}
+	throw std::runtime_error("No such tram");
+}
+tram& vehicles_manager::add_tram(std::string registration_mark,
+uint8_t capacity)
+{
+	auto new_tram = tram(registration_mark, capacity);
+	l_trams.push_front(new_tram);
+	return l_trams.front();
+}
+std::string vehicles_manager::serialize_all_trams()
+{
+	if (l_trams.empty()) {
+		return "empty trams list";
+	}
+	std::stringstream ss;
+	ss << "--------------------------\n";
+	for (auto& tram : l_trams) {
+		ss << tram.serialize_ui() << std::endl;
+	}
+	ss << "--------------------------\n";
+	return ss.str();
+}
+bool vehicles_manager::check_if_vehicle_exists(UID uid_to_find)
+{
+	for (auto& bus : l_buses) {
+		if (bus.get_uid()==uid_to_find)
+			return true;
+	}
+	for (auto& e_bus : l_e_buses) {
+		if (e_bus.get_uid()==uid_to_find)
+			return true;
+	}
+	for (auto& tram : l_trams) {
+		if (tram.get_uid()==uid_to_find)
+			return true;
+	}
+	return false;
+}
+vehicle::vehicle_type vehicles_manager
+::get_vehicle_type(UID uid_to_find)
+{
+	for (auto& bus : l_buses) {
+		if (bus.get_uid()==uid_to_find)
+			return vehicle::bus;
+	}
+	for (auto& e_bus : l_e_buses) {
+		if (e_bus.get_uid()==uid_to_find)
+			return vehicle::e_bus;
+	}
+	for (auto& tram : l_trams) {
+		if (tram.get_uid()==uid_to_find)
+			return vehicle::tram;
+	}
+	throw std::runtime_error("no such vehicle type");
+}
+void vehicles_manager::save_db(const std::string& db)
+{
+	std::ofstream ofs(db);
+	if (!ofs.is_open())
+		return;
+	boost::archive::text_oarchive oa(ofs);
+	oa & l_buses & l_e_buses & l_trams;
+	ofs.close();
+}
+void vehicles_manager::load_db(const std::string& db)
+{
+	std::ifstream ifs(db);
+	if (!ifs.is_open())
+		return;
+	boost::archive::text_iarchive ia(ifs);
+	ia & l_buses & l_e_buses & l_trams;
+	ifs.close();
+}
+vehicle& vehicles_manager::get_vehicle_by_id(UID uid_to_find)
+{
+	for (auto& bus : l_buses) {
+		if (bus.get_uid()==uid_to_find)
+			return (vehicle&)bus;
+	}
+	for (auto& e_bus : l_e_buses) {
+		if (e_bus.get_uid()==uid_to_find)
+			return (vehicle&)e_bus;
+	}
+	for (auto& tram : l_trams) {
+		if (tram.get_uid()==uid_to_find)
+			return (vehicle&)tram;
+	}
+	throw std::runtime_error("no such vehicle");
+}
+#include "core/application.h"
+int main()
+{
+	application app = application();
+	try {
+		app.run();
+	}
+	catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}
+	catch (...) {
+		std::cerr << "Unhandled error happend. Bye!" << std::endl;
+	}
+	return 0;
+}
+cmake_minimum_required(VERSION 3.22)
+project(TransportManagementSystem)
+set(CMAKE_CXX_STANDARD 17)
+set(Boost_NO_BOOST_CMAKE ON)
+set(Boost_USE_STATIC_LIBS ON)
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+set(Sources
+        main.cpp
+        vehicle/vehicle.cpp
+        vehicle/vehicle.h
+        route/route.cpp
+        route/route.h
+        bus_stop/bus_stop.cpp
+        bus_stop/bus_stop.h
+        person/person.cpp
+        person/person.h
+        person/driver.cpp
+        person/driver.h
+        date/date.cpp
+        date/date.h
+        person/passenger.cpp
+        person/passenger.h
+        travel_cards/travel_card.cpp
+        travel_cards/travel_card.h
+        travel_cards/travel_cards_manager.cpp
+        travel_cards/travel_cards_manager.h
+        vehicle/vehicle.cpp
+        vehicle/vehicle.h
+        vehicle/bus.cpp
+        vehicle/bus.h
+        vehicle/e_bus.cpp
+        vehicle/e_bus.h
+        vehicle/tram.cpp
+        vehicle/tram.h
+        uid_generator/uid_generator.cpp
+        uid_generator/uid_generator.h
+        users/user.cpp
+        users/user.h
+        users/user_passenger.cpp
+        users/user_passenger.h
+        users/user_admin.cpp
+        users/user_admin.h
+        users/users_manager.cpp
+        users/users_manager.h
+        core/core.cpp core/core.h
+        route/routes_manager.cpp
+        route/routes_manager.h
+        bus_stop/bus_stops_manager.cpp
+        bus_stop/bus_stops_manager.h
+        person/drivers_manager.cpp
+        person/drivers_manager.h
+        vehicle/vehicles_manager.cpp
+        vehicle/vehicles_manager.h
+        manager/manager.h
+        interface/console/renderer.h
+        interface/console/controller.h
+        core/application.h)
+set(Directories
+        route
+        bus_stop
+        date
+        person
+        vehicle
+        travel_cards
+        uid_generator
+        users
+        core
+        manager
+        interface)
+find_package(Boost 1.80.0 REQUIRED COMPONENTS serialization)
+find_package(CryptoPP REQUIRED)
+add_executable(TransportManagementSystem main.cpp ${Sources})
+target_include_directories(TransportManagementSystem 
+PRIVATE ${Directories})
+target_link_libraries(TransportManagementSystem PRIVATE 
+${Boost_LIBRARIES} 
+${CryptoPP_LIBRARY})
+name: TMS Build
+on:
+  push:
+    branches: [ "master", "tms-ci-cd" ]
+  pull_request:
+    branches: [ "master" ]
+env:
+  BUILD_TYPE: Release
+jobs:
+  build:
+    steps:
+    - uses: actions/checkout@v3
+    - uses: seanmiddleditch/gha-setup-ninja@master
+    - name: Install boost
+      uses: MarkusJx/install-boost@v2.4.1
+      id: install-boost
+      with:
+          boost_version: 1.80.0
+    - name: Build
+      run: cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      -DCMAKE_MAKE_PROGRAM=ninja -G Ninja -S 
+      ${{github.workspace}}/CourseWork/TransportManagementSystem -B  
+      ${{github.workspace}}/CourseWork/TransportManagementSystem
+      /build
+      env:
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+\end{verbatim}

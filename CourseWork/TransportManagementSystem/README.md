@@ -1,7 +1,7 @@
 # Transport Management System
 Информационная система городскогого автотранспорта - курсовая работа по предмету ПнаЯВУ специальности ВМСиС.
 Пояснительная записка, а так же сопутствующая документация оформлена по стандарту предприятия СТП 01-2017.
-Детали оформления работы доступны в соответствующем [файле](https://github.com/heycarl/BSUIR_CPP/tree/master/CourseWork/TransportManagementSystem/docs/README.md").
+Детали оформления работы доступны в соответствующем [файле](https://github.com/heycarl/BSUIR_CPP/tree/master/CourseWork/TransportManagementSystem/docs/README.md).
 
 ## Используемые технологии
 ### Разработка

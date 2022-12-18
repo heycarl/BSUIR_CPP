@@ -1,0 +1,527 @@
+%\section{Описание классов}
+\section{Структурное проектирование}
+
+Прежде чем описывать каждый класс в отдельности, стоит прояснить архитектуру программы в целом. При проектировании программы одной из основных задач была задача построить максимально гибкую и удобную для расширения систему. 
+
+Для реализации задача был выбран подход, исользующий \textit{менеджеров} для управления множеством одинаковых объектов\cite{paterns}. Такой \textit{менеджер} предусмотрен для каждой значимой единицы и имеет соответствующие методы для управления этими объектами. Также менеджеры имеют обязательные для реализации функции сохранения и загрузки данных из базы данных (\textit{БД}).
+
+Все мененджеры агрегированы в ядро программного продукта \textit{core}, который предоставляет доступ к функционалу менеджеров из вне.
+
+Использование команд позволяет не только управлять изменением модели в обе стороны, но и при достаточной грануляции команд позволяет комбинировать их различным образом, что дает возможность реализовать карты способностей с различными поведениями а также преимущество повторного использования кода\cite{skaliar}. UML-диаграмма информационной системы представлена в Приложении Б (ГУИР.400201.002 PP). Листинг ИС приведен в приложении А.
+
+\subsection{Реализация класса bus\_stop -- автобусной остановки}
+\begin{verbatim}
+class bus_stop {
+	std::string get_options_string(); 
+ - сериализация удобств остановки
+	bus_stop() = default;  
+ - конструктор по-умолчанию
+	bus_stop(const std::string&, double, double); 
+ - конструктор с параметрами
+	UID get_uid() const; 
+ - получение значения UID
+	void set_uid(UID u); 
+ - установка UID
+	const std::string& get_name() const; 
+ - получение названия
+	void set_name(const std::string& n); 
+ - установка названия
+	std::string get_coords() const; 
+ - получение координат
+	void set_coords(double, double); 
+ - установка координат
+	void set_options(std::list<stop_options> stop_options); 
+ - установка удобств остановки
+	std::string view_existing_options(); 
+ - получение всех существующих удобств
+	std::string serialize_ui(); 
+ - сериализация остановки для интерфейса
+};
+\end{verbatim}
+
+\subsection{Реализация core -- ядра программы}
+\begin{verbatim}
+class core {
+	static travel_cards_manager tcm;
+ - объект менеджера проездных
+	static routes_manager rm; 
+ - объект менеджера маршрутов
+	static bus_stops_manager bsm;
+ - объект менеджера остановок
+	static drivers_manager dm;
+ - объект менеджера водителей
+	static vehicles_manager vm;
+ - объект менеджера ТС
+	static void load();
+ - метод загрузки данных из БД
+	static void save();
+ - метод загрузки данных в БД
+};
+\end{verbatim}
+
+\subsection{Реализация класса person -- персоны}
+\begin{verbatim}
+class person {
+	person(std::string fisrt_name, std::string last_name
+ , std::string dob);
+ - консткуртор с параметрами
+	person() = default;
+ - конструктор по-умолчанию
+	virtual std::string serialize_ui();
+ - виртуальный метод сериализатора для интерфейса 
+	std::string get_first_last_name();
+ - получение имени и фамилии
+	UID get_uid() const;
+ - получение UID
+	static void ask_names_dob(std::string req, std::string& f_name,
+ std::string& last_name, std::string& dob);
+ - статический метод для запроса данных для регистрации
+};
+\end{verbatim}
+
+\subsection{Реализация класса passenger -- пассажира}
+\begin{verbatim}
+class passenger : public person {
+	passenger() = default;
+	passenger(std::string f_name, std::string l_name, std::string dob);
+	UID card;
+ - UID проездного пассажира
+	std::string serialize_ui() override;
+	UID get_card();
+ - получение UID проездного
+};
+\end{verbatim}
+
+\subsection{Реализация класса driver -- водителя}
+\begin{verbatim}
+class driver : public person {
+	driver() = default;
+ - конструктор по-умолчанию
+	driver(std::string fisrt_name, std::string last_name, 
+ std::string dob, vehicle::vehicle_type v_type, date lic_exp);
+ - конструктор с параметрами
+	std::string serialize_ui() override
+	{
+		return person::serialize_ui()+serialize_license();
+	};
+ - сериализатор для интерфейса
+	std::string serialize_license();
+ - получение информации о лицензии
+	const date& get_license_expiration() const;
+ - получение даты истечения лицензии
+	vehicle::vehicle_type get_license_type() const;
+ - получение типа лицензии
+};
+\end{verbatim}
+
+\subsection{Реализация класса drivers\_manager -- менеджера водителей}
+\begin{verbatim}
+class drivers_manager : public manager {
+	driver& find_driver(UID);
+ - поиск водителя по UID
+	driver& add_driver(std::string fisrt_name, std::string last_name, 
+ std::string dob, std::string v_type, std::string exp_date);
+ - добавление нового водителя
+	std::string serialize_all_drivers();
+ - сериализация всех водителей
+	bool check_if_driver_exists(UID);
+ - проверка существования водителя
+};
+\end{verbatim}
+
+\subsection{Реализация класса route -- маршрута}
+\begin{verbatim}
+class route {
+	UID get_uid() const;
+ - получение UID
+	UID get_route_driver() const;
+ - получение UID водителя
+	void set_route_driver(UID driver);
+ - установка UID водителя
+	UID get_vehicle() const;
+ - получение UID транспортного средства
+	void set_vehicle(UID veh);
+ - установка транспортного средства
+	route() = default;
+ - конструктор по-умолчани.
+	route(UID vehicle, UID route_driver, std::string src, 
+ std::string dst);
+ - конструктор с параметрами
+	std::string serialize_route();
+ - сериализация направления рейса
+	std::string serialize_full_route();
+ - сериализация полного маршрута
+	std::string serialize_stats();
+ - сериализация статистики маршрута
+	void increment_popularity();
+ - увеличить популярность
+	void delete_stop(uint8_t id);
+ - удалить остановку из маршрута
+	void add_stop(UID u, time_t arrival_time, bool need_to_stop);
+ - добавить остановку в маршрут
+	bool check_arrival_time(UID bus_stop_uid, time_t& arrival_time);
+ - узнать время прибытия ТС на остановку
+};
+\end{verbatim}
+
+\subsection{Реализация класса routes\_manager -- менеджера маршрутов}
+\begin{verbatim}
+class routes_manager : public manager{
+	route& add_route(UID vehicle, UID driver, std::string src_point,
+ std::string dst_point);
+ - добавление маршрута
+	route& find_route(UID);
+ - поиск маршрута по UID
+	std::list<route> get_routes_with_stop(UID stop_id);
+ - получить список маршрутов с остановкой
+	std::string serialize_all_routes_path();
+ - сериализировать все направления маршуртов
+	std::string serialize_all_routes_stats();
+ - сериализировать всю статистику по маршрутам
+};
+\end{verbatim}
+
+\subsection{Реализация класса travel\_card -- проездного}
+\begin{verbatim}
+class travel_card {
+	UID uid;
+	uint8_t remaining_trips;
+ - количество поездок
+	travel_card();
+ - конструктор по-умолчанию
+	~travel_card() = default;
+ - деструктор
+	explicit travel_card(UID);
+ - конструктор с аргументом
+	uint8_t get_remaining_trips() const;
+ - получения количества поездок
+	void set_remaining_trips(uint8_t remaining_trips);
+ - установка поездок
+	void decrement_trips();
+ - уменьшение количества поездок
+	UID get_uid() const;
+ - получение UID
+	void set_uid(UID u);
+ - установка UID
+};
+\end{verbatim}
+
+\subsection{Реализация класса travel\_cards\_manager -- менеджера проездных}
+\begin{verbatim}
+class travel_cards_manager : public manager {
+	void create_if_not_exists(UID);
+ - создать проездной, если не существует
+	travel_card& find_travel_card(UID);
+ - поиск проездного по UID
+	static bool validator(travel_card&);
+ - валидатор с функцией декремента поездок
+};
+\end{verbatim}
+
+\subsection{Реализация класса uid\_generator -- генератора UID-ов}
+\begin{verbatim}
+class uid_generator {
+   static UID generate(); - генерирует рандомный UID
+};
+\end{verbatim}
+
+\subsection{Реализация класса user -- пользователя }
+\begin{verbatim}
+class user {
+	std::string login;
+	std::string password;
+	std::string get_hash(std::string source_str);
+ - в будущем функция будет использовать хэширование пароля
+	user(std::string login, std::string password);
+ - конструктор с параметрами
+	user() = default;
+ - конструктор по-умолчанию
+	bool validate_credentials(std::string, std::string);
+ - аутентификация
+	static void ask_credentials(std::string, std::string&,
+ std::string&);
+};
+\end{verbatim}
+
+\subsection{Реализация класса user\_admin -- администратора}
+\begin{verbatim}
+class user_admin : public user {
+	user_admin() = default;
+ - конструктор по-умолчанию
+	user_admin(const std::string&, const std::string&);
+ - конструктор с параметрами
+	void create_driver();
+ - создание водителя
+	void view_drivers();
+ - просмотр водителей
+	void modify_driver();
+ - редактирование водителя
+	void create_vehicle();
+ - создание транспортного средства (ТС)
+	void view_vehicles();
+ - просмотр ТС
+	void create_bus_stop();
+ - создание остановки
+	void view_bus_stops();
+ - просмотр остановок
+	void modify_bus_stop();
+ -редактирование остановок
+	void create_route();
+ - создание маршрута
+	void add_stop_to_route();
+ - добавление остановки в маршрут
+	void serialize_routes_stats();
+ - сериализатор статистики маршрута
+	void route_serialize_information();
+ - сериализация информации о маршруте
+};
+
+\end{verbatim}
+
+\subsection{Реализация класса user\_passenger -- пользователя пассажира}
+\begin{verbatim}
+class user_passenger : public user, public passenger {
+	user_passenger() = default;
+ - конструктор по-умолчанию
+	user_passenger(std::string f_name, std::string l_name, 
+ std::string dob, 
+ std::string login, std::string password);
+ - конструктор с параметрами
+	void buy_trips();
+ - покупка поездок
+	void view_remaining_trips();
+ - просмотр оставшихся поездок
+	void enter_bus();
+ - вход в ТС
+	void get_arrival_time();
+ - просмтр времени прибытия ТС на остановку
+};
+\end{verbatim}
+
+\subsection{Реализация класса users\_manager -- менеджера пользователей}
+\begin{verbatim}
+class users_manager : public manager {
+	std::list<user_passenger> l_passengers;
+	std::list<user_admin> l_admins;
+	user_passenger& sign_up_passenger();
+ - регистрация пассажира
+	user_admin& sign_up_admin();
+ - регистрация администратора
+	user_passenger& sign_in_passenger();
+ - аутентификация пассажира
+	user_admin& sign_in_admin();
+ - аутентификация администратора
+};
+\end{verbatim}
+
+\subsection{Реализация класса vehicle -- транспортного средства}
+\begin{verbatim}
+class vehicle {
+	enum vehicle_type {
+		bus,
+		e_bus,
+		tram
+	}; - типы ТС
+	static std::map<vehicle_type, std::string> vehicle_type_string;
+ - соотношение ТС и названия
+	UID uid;
+	std::string registration_mark;
+ - регистрационный номер
+	vehicle_type type;
+	uint8_t capacity;
+ - вместительность
+	vehicle() = default;
+ - конструктор по-умолчанию
+	UID get_uid() const;
+ - просмотр UID
+	const std::string& get_registration_mark() const;
+ - просмотр регистрационного знака
+	vehicle_type get_type() const;
+ - просмотр типа ТС
+	uint8_t get_capacity() const;
+ - просмотр вместительности
+	vehicle(std::string registration_mark, vehicle::vehicle_type type
+ , uint8_t capacity);
+	bool validate_card(travel_card&);
+ - валидатор проездного
+	virtual int get_travel_distance();
+ - максимальное растояние к передвижению
+	virtual std::string serialize_ui();
+ - сериализация ТС для интерфейса
+	static std::string serialize_vehicle_type(vehicle_type);
+ - сериализация типа ТС
+	static vehicle_type parse_vehicle_type(std::string);
+ - парсинг типа ТС в тип ТС
+	static std::string view_existing_types();
+ - вывод существующих типов ТС
+};
+\end{verbatim}
+
+\subsection{Реализация класса tram -- трамвая}
+\begin{verbatim}
+class tram : public vehicle {
+	tram() = default;
+	tram(std::string, uint8_t);
+};
+\end{verbatim}
+
+\subsection{Реализация класса bus -- автобуса}
+\begin{verbatim}
+class bus : public vehicle {
+	uint8_t fuel_bank_size;
+ - вместительность топливного бака
+	double fuel_consumption;
+ - расход топлива
+	bus() = default;
+  - конструктор по-умолчанию
+	bus(std::string, uint8_t, uint8_t, double);
+  - конструктор c параметрами   
+};
+\end{verbatim}
+
+\subsection{Реализация класса e\_bus -- электробуса}
+\begin{verbatim}
+class e_bus : public vehicle {
+	double battery_consumption;
+ - потребление заряда
+	e_bus() = default;
+ - конструктор по-умолчанию
+	e_bus(std::string registration_mark, uint8_t capacity,
+			double battery_consumption);
+ - конструктор c параметрами 
+};
+
+\end{verbatim}
+
+\subsection{Реализация класса vehicle\_manager -- менеджера ТС}
+\begin{verbatim}
+class vehicles_manager : public manager{
+	std::list<bus> l_buses;
+ - список автобусов
+	std::list<e_bus> l_e_buses;
+ - список электробусов
+	std::list<tram> l_trams;
+ - список трамваев
+	bus& find_bus(UID);
+ - поиск автобуса по UID
+	bus& add_bus(std::string, uint8_t, uint8_t, double);
+ - добавление нового автобуса
+	std::string serialize_all_buses();
+ - сериализация всех автобусов
+	e_bus& find_e_bus(UID);
+ - поиск электробуса по UID
+	e_bus& add_e_bus(std::string, uint8_t, double);
+ - добавление нового электробуса
+	std::string serialize_all_e_buses();
+ - сериализация всех электробусов
+	tram& find_tram(UID);
+ - поиск трамвая по UID
+	tram& add_tram(std::string, uint8_t);
+ - добавление нового трамвая
+	std::string serialize_all_trams();
+ - сериализация всех трамваев
+	bool check_if_vehicle_exists(UID);
+ - проверка на существование транспорта с UID
+	vehicle::vehicle_type get_vehicle_type(UID);
+ - возвращает тип ТС по его UID
+	vehicle& get_vehicle_by_id(UID);
+ - возвращает приведенное к vehicle ТС по UID 
+};
+\end{verbatim}
+
+\subsection{Реализация класса controller -- управления ИС из терминала}
+\begin{verbatim}
+class controller {
+	explicit controller(users_manager& u);
+ - конструктор с аргументом менеджера пользователей
+	void run();
+ - запуск контроллера
+	void admin_ui(user_admin& a);
+ - UI администратора
+	void passenger_ui(user_passenger& p);
+ - UI пассажира
+	users_manager& umanager;
+ - объект менеджера пользователей
+	struct func_admin {
+		std::string description;
+		std::_Mem_fn<void (user_admin::*)()> function;
+	};
+ - структура интерфейса администратора, содержащая 
+ описание функции и саму функцию
+	static std::map<int, struct func_admin> admin_functions;
+ - карта индекса функции и структуры для администратора
+	struct func_passenger {
+		std::string description;
+		std::_Mem_fn<void (user_passenger::*)()> function;
+	};
+  - структура интерфейса пользователя, содержащая 
+ описание функции и саму функцию
+	static std::map<int, struct func_passenger> passenger_functions;
+ - карта индекса функции и структуры для пассажира
+};
+\end{verbatim}
+
+
+\subsection{Реализация класса application -- основного класса приложения}
+\begin{verbatim}
+class date {
+	uint16_t year = 0;
+	uint8_t month = 0;
+	uint8_t day = 0;
+	date(uint16_t year, uint8_t month, uint8_t day);
+ - конструктор с численными параметрами
+	date(std::string);
+ - конструктор с функцией парсинга даты из строки
+	date() = default;
+ - конструктор по-умолчанию
+	std::string serialize_ui() const;
+ - сериализация даты
+	void set_date(uint16_t y, uint8_t m, uint8_t d);
+ - установка с численными параметрами
+	void set_date(std::tm);
+ - установка из объекта времени
+	void set_date(std::string);
+ - установка с функцией парсинга даты из строки
+	static bool date_parser(std::string& s, tm& date);
+ - парсер даты из строки в объект времени
+};
+\end{verbatim}
+
+\subsection{Реализация класса renderer -- вывод сообщений}
+\begin{verbatim}
+class renderer {
+	static void render_boot_screen()
+ - вывод заставки при загрузке ИС
+	static void render_message(const std::string& msg)
+ - вывод сообщения на экран
+	static void render_error(const std::string& err)
+ - вывод ошибки на экран
+	static void render_headline(const std::string& headline)
+ - вывод заголока
+};
+\end{verbatim}
+
+\subsection{Реализация класса manager -- обязательные к реализации функции менеджера}
+\begin{verbatim}
+class manager {
+public:
+	virtual void save_db(const std::string&) = 0;
+ - сохранение данных менеджера в БД
+	virtual void load_db(const std::string&) = 0;
+ - загрузка данных из БД в мененджер
+};
+\end{verbatim}
+
+\subsection{Реализация класса application -- основного класса приложения}
+\begin{verbatim}
+class application {
+	void run();
+ - запуск приложения
+	void quit();
+ - завершение работы приложения
+	~application();
+ - декструктор
+	users_manager umanager;
+ - менеджер пользователей
+};
+\end{verbatim}
