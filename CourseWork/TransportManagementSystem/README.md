@@ -5,14 +5,14 @@
 
 ## Используемые технологии
 ### Разработка
-* IDE - JetBrains CLion
+* IDE - [JetBrains CLion]("https://www.jetbrains.com/ru-ru/clion/")
 * VSC - Git + Github
 * Build - CMake
 * Environment - MSYS2
 * CI/CD - Github Actions
 ### Библиотеки
-* Boost
-* CryptoPP
+* [Boost]("https://boost.org/")
+* [CryptoPP]("https://cryptopp.com/")
 
 ## Функционал ИС
 ### Администратор:
